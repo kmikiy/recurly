@@ -25,8 +25,7 @@
         <phone nil="true"></phone>
       </address>
       <gifter_name>Sally</gifter_name>
-      <personal_message>
-        Hi John, Happy Birthday! I hope you have a great day! Love, Sally</personal_message>
+      <personal_message>Hi John, Happy Birthday! I hope you have a great day! Love, Sally</personal_message>
     </delivery>
     <created_at type="datetime">2016-07-29T21:41:11Z</created_at>
     <updated_at type="datetime">2016-08-02T23:50:38Z</updated_at>
