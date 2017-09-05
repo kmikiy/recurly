@@ -113,6 +113,46 @@ type Usage struct {
 	UsagePercentage    recurly.NullFloat `xml:"usage_percentage,omitempty"`
 }
 
+// Usage represents the usage object sent in webhooks.
+type GiftCard struct {
+	XMLName              xml.Name         `xml:"gift_card,omitempty"`
+	RedemptionCode       string           `xml:"redemption_code,omitempty"`
+	ID                   int              `xml:"id,omitempty"`
+	ProductCode          string           `xml:"product_code,omitempty"`
+	UnitAmountInCents    recurly.NullInt  `xml:"unit_amount_in_cents,omitempty"`
+	Currency             string           `xml:"currency,omitempty"`
+	GifterAccountCode    string           `xml:"gifter_account_code,omitempty"`
+	RecipientAccountCode string           `xml:"recipient_account_code,omitempty"`
+	InvoiceNumber        int              `xml:"invoice_number,omitempty"`
+	Delivery             GiftCardDelivery `xml:"delivery,omitempty"`
+	CreatedAt            recurly.NullTime `xml:"created_at,omitempty"`
+	UpdatedAt            recurly.NullTime `xml:"updated_at,omitempty"`
+	DeliveredAt          recurly.NullTime `xml:"delivered_at,omitempty"`
+	RedeemedAt           recurly.NullTime `xml:"redeemed_at,omitempty"`
+	CanceledAt           recurly.NullTime `xml:"canceled_at,omitempty"`
+}
+
+type GiftCardDelivery struct {
+	Method          string                  `xml:"method,omitempty"`
+	EmailAddress    string                  `xml:"email_address,omitempty"`
+	DeliverAt       recurly.NullTime        `xml:"deliver_at,omitempty"`
+	FirstName       string                  `xml:"first_name,omitempty"`
+	LastName        string                  `xml:"last_name,omitempty"`
+	Address         GiftCardDeliveryAddress `xml:"address,omitempty"`
+	GifterName      string                  `xml:"gifter_name"`
+	PersonalMessage string                  `xml:"personal_message"`
+}
+
+type GiftCardDeliveryAddress struct {
+	Address  string `xml:"address1"`
+	Address2 string `xml:"address2"`
+	City     string `xml:"city"`
+	State    string `xml:"state"`
+	ZIP      string `xml:"zip"`
+	Country  string `xml:"country"`
+	Phone    string `xml:"phone"`
+}
+
 // Transaction constants.
 const (
 	TransactionFailureTypeDeclined  = "declined"
@@ -236,6 +276,20 @@ func Parse(r io.Reader) (interface{}, error) {
 	// Usage notifications
 	case UsageNotificationNewUsageXMLName:
 		dst = &UsageNotificationNewUsage{}
+
+	// Gift Card notifications
+	case GiftCardNotificationPurchasedXMLName:
+		dst = &GiftCardNotificationPurchased{}
+	case GiftCardNotificationCanceledXMLName:
+		dst = &GiftCardNotificationCanceled{}
+	case GiftCardNotificationUpdatedXMLName:
+		dst = &GiftCardNotificationUpdated{}
+	case GiftCardNotificationRegeneratedXMLName:
+		dst = &GiftCardNotificationRegenerated{}
+	case GiftCardNotificationRedeemedXMLName:
+		dst = &GiftCardNotificationRedeemed{}
+	case GiftCardNotificationUpdatedBalanceXMLName:
+		dst = &GiftCardNotificationUpdatedBalance{}
 
 	case NewInvoice:
 		dst = &NewInvoiceNotification{}
