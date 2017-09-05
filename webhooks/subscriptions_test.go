@@ -45,6 +45,7 @@ func TestParse_SubscriptionNotificationNewSubscription(t *testing.T) {
 			ExpiresAt:              recurly.NewTime(expiresTs),
 			CurrentPeriodStartedAt: recurly.NewTime(startedTs),
 			CurrentPeriodEndsAt:    recurly.NewTime(endsTs),
+			CollectionMethod:       recurly.CollectionMethodAutomatic,
 		},
 	}) {
 		t.Fatalf("unexpected notification: %#v", n)
@@ -87,6 +88,7 @@ func TestParse_SubscriptionNotificationUpdatedSubscription(t *testing.T) {
 			ExpiresAt:              recurly.NewTime(expiresTs),
 			CurrentPeriodStartedAt: recurly.NewTime(startedTs),
 			CurrentPeriodEndsAt:    recurly.NewTime(endsTs),
+			CollectionMethod:       recurly.CollectionMethodAutomatic,
 		},
 	}) {
 		t.Fatalf("unexpected notification: %#v", n)
@@ -129,6 +131,7 @@ func TestParse_SubscriptionNotificationCanceledSubscription(t *testing.T) {
 			ExpiresAt:              recurly.NewTime(expiresTs),
 			CurrentPeriodStartedAt: recurly.NewTime(startedTs),
 			CurrentPeriodEndsAt:    recurly.NewTime(endsTs),
+			CollectionMethod:       recurly.CollectionMethodAutomatic,
 		},
 	}) {
 		t.Fatalf("unexpected notification: %#v", n)
@@ -171,6 +174,7 @@ func TestParse_SubscriptionNotificationExpiredSubscription(t *testing.T) {
 			ExpiresAt:              recurly.NewTime(expiresTs),
 			CurrentPeriodStartedAt: recurly.NewTime(startedTs),
 			CurrentPeriodEndsAt:    recurly.NewTime(endsTs),
+			CollectionMethod:       recurly.CollectionMethodAutomatic,
 		},
 	}) {
 		t.Fatalf("unexpected notification: %#v", n)
@@ -210,6 +214,7 @@ func TestParse_SubscriptionNotificationRenewedSubscription(t *testing.T) {
 			ActivatedAt:            recurly.NewTime(activatedTs),
 			CurrentPeriodStartedAt: recurly.NewTime(startedTs),
 			CurrentPeriodEndsAt:    recurly.NewTime(endsTs),
+			CollectionMethod:       recurly.CollectionMethodAutomatic,
 		},
 	}) {
 		t.Fatalf("unexpected notification: %#v", n)
@@ -248,7 +253,7 @@ func TestParse_SubscriptionNotificationReactivatedSubscription(t *testing.T) {
 			ActivatedAt:            recurly.NewTime(activatedTs),
 			CurrentPeriodStartedAt: recurly.NewTime(startedTs),
 			CurrentPeriodEndsAt:    recurly.NewTime(endsTs),
-			CollectionMethod:       "automatic",
+			CollectionMethod:       recurly.CollectionMethodAutomatic,
 		},
 	}) {
 		t.Fatalf("unexpected notification: %#v", n)

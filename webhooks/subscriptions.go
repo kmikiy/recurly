@@ -1,6 +1,8 @@
 package webhooks
 
-import "github.com/kmikiy/recurly"
+import (
+	"github.com/kmikiy/recurly"
+)
 
 const (
 	// Subscription notifications.
