@@ -38,6 +38,12 @@ const (
 	SubscriptionStatePastDue = "past_due"
 )
 
+const (
+	SubscriptionCollectionMethodAutomatic = "automatic"
+
+	SubscriptionCollectionMethodManual = "manual"
+)
+
 // Subscription represents an individual subscription.
 type Subscription struct {
 	XMLName                xml.Name             `xml:"subscription"`
@@ -65,6 +71,7 @@ type Subscription struct {
 	NetTerms               NullInt              `xml:"net_terms,omitempty"`
 	SubscriptionAddOns     []SubscriptionAddOn  `xml:"subscription_add_ons>subscription_add_on,omitempty"`
 	PendingSubscription    *PendingSubscription `xml:"pending_subscription,omitempty"`
+	CollectionMethod       string               `xml:"collection_method"`
 }
 
 // UnmarshalXML unmarshals transactions and handles intermediary state during unmarshaling
@@ -96,6 +103,7 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		NetTerms               NullInt              `xml:"net_terms,omitempty"`
 		SubscriptionAddOns     []SubscriptionAddOn  `xml:"subscription_add_ons>subscription_add_on,omitempty"`
 		PendingSubscription    *PendingSubscription `xml:"pending_subscription,omitempty"`
+		CollectionMethod       string               `xml:"collection_method,omitempty"`
 	}
 	if err := d.DecodeElement(&v, &start); err != nil {
 		return err
@@ -126,6 +134,7 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		NetTerms:               v.NetTerms,
 		SubscriptionAddOns:     v.SubscriptionAddOns,
 		PendingSubscription:    v.PendingSubscription,
+		CollectionMethod:       v.CollectionMethod,
 	}
 
 	return nil
