@@ -10,7 +10,7 @@ const (
 	GiftCardNotificationUpdatedBalanceXMLName = "updated_balance_gift_card_notification"
 )
 
-// Subscription types.
+// GiftCard types.
 type (
 	// GiftCardNotificationPurchased is sent when a gift card is purchased by a gifter.
 	// https://dev.recurly.com/page/webhooks#section-purchased-gift-card

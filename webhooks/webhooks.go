@@ -9,19 +9,6 @@ import (
 	"github.com/kmikiy/recurly"
 )
 
-// Webhook notification constants.
-const (
-	// Invoice notifications.
-	NewInvoice     = "new_invoice_notification"
-	PastDueInvoice = "past_due_invoice_notification"
-
-	// Payment notifications.
-	SuccessfulPayment = "successful_payment_notification"
-	FailedPayment     = "failed_payment_notification"
-	VoidPayment       = "void_payment_notification"
-	SuccessfulRefund  = "successful_refund_notification"
-)
-
 type notificationName struct {
 	XMLName xml.Name
 }
@@ -159,54 +146,6 @@ const (
 	TransactionFailureTypeDuplicate = "duplicate_transaction"
 )
 
-// Invoice types.
-type (
-	// NewInvoiceNotification is sent when an invoice generated.
-	// https://dev.recurly.com/page/webhooks#section-new-invoice
-	NewInvoiceNotification struct {
-		Account Account `xml:"account"`
-		Invoice Invoice `xml:"invoice"`
-	}
-
-	// PastDueInvoiceNotification is sent when an invoice is past due.
-	// https://dev.recurly.com/v2.4/page/webhooks#section-past-due-invoice
-	PastDueInvoiceNotification struct {
-		Account Account `xml:"account"`
-		Invoice Invoice `xml:"invoice"`
-	}
-)
-
-// Payment types.
-type (
-	// SuccessfulPaymentNotification is sent when a payment is successful.
-	// https://dev.recurly.com/v2.4/page/webhooks#section-successful-payment
-	SuccessfulPaymentNotification struct {
-		Account     Account     `xml:"account"`
-		Transaction Transaction `xml:"transaction"`
-	}
-
-	// FailedPaymentNotification is sent when a payment fails.
-	// https://dev.recurly.com/v2.4/page/webhooks#section-failed-payment
-	FailedPaymentNotification struct {
-		Account     Account     `xml:"account"`
-		Transaction Transaction `xml:"transaction"`
-	}
-
-	// VoidPaymentNotification is sent when a successful payment is voided.
-	// https://dev.recurly.com/page/webhooks#section-void-payment
-	VoidPaymentNotification struct {
-		Account     Account     `xml:"account"`
-		Transaction Transaction `xml:"transaction"`
-	}
-
-	// SuccessfulRefundNotification is sent when an amount is refunded.
-	// https://dev.recurly.com/page/webhooks#section-successful-refund
-	SuccessfulRefundNotification struct {
-		Account     Account     `xml:"account"`
-		Transaction Transaction `xml:"transaction"`
-	}
-)
-
 // ErrUnknownNotification is used when the incoming webhook does not match a
 // predefined notification type. It implements the error interface.
 type ErrUnknownNotification struct {
@@ -291,18 +230,21 @@ func Parse(r io.Reader) (interface{}, error) {
 	case GiftCardNotificationUpdatedBalanceXMLName:
 		dst = &GiftCardNotificationUpdatedBalance{}
 
-	case NewInvoice:
-		dst = &NewInvoiceNotification{}
-	case PastDueInvoice:
-		dst = &PastDueInvoiceNotification{}
-	case SuccessfulPayment:
-		dst = &SuccessfulPaymentNotification{}
-	case FailedPayment:
-		dst = &FailedPaymentNotification{}
-	case VoidPayment:
-		dst = &VoidPaymentNotification{}
-	case SuccessfulRefund:
-		dst = &SuccessfulRefundNotification{}
+	// Invoice notifications
+	case InvoiceNotificationNewXMLName:
+		dst = &InvoiceNotificationNew{}
+	case InvoiceNotificationPastDueXMLName:
+		dst = &InvoiceNotificationPastDue{}
+
+	// Payment notifications
+	case PaymentNotificationSuccessfulXMLName:
+		dst = &PaymentNotificationSuccessful{}
+	case PaymentNotificationFailedXMLName:
+		dst = &PaymentNotificationFailed{}
+	case PaymentNotificationVoidXMLName:
+		dst = &PaymentNotificationVoid{}
+	case PaymentNotificationSuccessfulRefundXMLName:
+		dst = &PaymentNotificationSuccessfulRefund{}
 	default:
 		return nil, ErrUnknownNotification{name: n.XMLName.Local}
 	}
