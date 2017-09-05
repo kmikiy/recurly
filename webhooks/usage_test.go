@@ -28,10 +28,11 @@ func TestParse_UsageNotificationNewUsage(t *testing.T) {
 				Code:    "923845792374",
 			},
 			Usage: Usage{
+				XMLName:            xml.Name{Local: "usage"},
 				ID:                 394729929104688227,
 				SubscriptionUUID:   "35cda8d4ae0a214f69779e4ddbbc2ebd",
 				AddOnCode:          "video_storage",
-				MeasuredUnitID:     39468192015319242,
+				MeasuredUnitID:     394681920153192422,
 				Amount:             -40,
 				RecordingTimestamp: recurly.NewTime(recordingTs),
 				UsageTimestamp:     recurly.NewTime(usageTs),
@@ -39,7 +40,6 @@ func TestParse_UsageNotificationNewUsage(t *testing.T) {
 				BilledAt:           recurly.NewTime(billedTs),
 				UsageType:          "PRICE",
 				UnitAmountInCents:  recurly.NewInt(50),
-				UsagePercentage:    recurly.NullFloat(0.0),
 			},
 		})
 	}
