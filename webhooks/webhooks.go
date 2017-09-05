@@ -202,12 +202,12 @@ func Parse(r io.Reader) (interface{}, error) {
 	var dst interface{}
 	switch n.XMLName.Local {
 	// Account notifications
-	case AccountNotificationNewAccountXMLName:
-		dst = &AccountNotificationNewAccount{}
-	case AccountNotificationUpdatedAccountXMLName:
-		dst = &AccountNotificationUpdatedAccount{}
-	case AccountNotificationCanceledAccountXMLName:
-		dst = &AccountNotificationCanceledAccount{}
+	case AccountNotificationNewXMLName:
+		dst = &AccountNotificationNew{}
+	case AccountNotificationUpdatedXMLName:
+		dst = &AccountNotificationUpdated{}
+	case AccountNotificationCanceledXMLName:
+		dst = &AccountNotificationCanceled{}
 	case AccountNotificationBillingInfoUpdatedXMLName:
 		dst = &AccountNotificationBillingInfoUpdated{}
 	case AccountNotificationBillingInfoUpdateFailedXMLName:
@@ -220,18 +220,18 @@ func Parse(r io.Reader) (interface{}, error) {
 		dst = &AccountNotificationDeletedShippingAddress{}
 
 	// Subscription notifications
-	case SubscriptionNotificationNewSubscriptionXMLName:
-		dst = &SubscriptionNotificationNewSubscription{}
-	case SubscriptionNotificationUpdatedSubscriptionXMLName:
-		dst = &SubscriptionNotificationUpdatedSubscription{}
-	case SubscriptionNotificationCanceledSubscriptionXMLName:
-		dst = &SubscriptionNotificationCanceledSubscription{}
-	case SubscriptionNotificationExpiredSubscriptionXMLName:
-		dst = &SubscriptionNotificationExpiredSubscription{}
-	case SubscriptionNotificationRenewedSubscriptionXMLName:
-		dst = &SubscriptionNotificationRenewedSubscription{}
-	case SubscriptionNotificationReactivatedSubscriptionXMLName:
-		dst = &SubscriptionNotificationReactivatedSubscription{}
+	case SubscriptionNotificationNewXMLName:
+		dst = &SubscriptionNotificationNew{}
+	case SubscriptionNotificationUpdatedXMLName:
+		dst = &SubscriptionNotificationUpdated{}
+	case SubscriptionNotificationCanceledXMLName:
+		dst = &SubscriptionNotificationCanceled{}
+	case SubscriptionNotificationExpiredXMLName:
+		dst = &SubscriptionNotificationExpired{}
+	case SubscriptionNotificationRenewedXMLName:
+		dst = &SubscriptionNotificationRenewed{}
+	case SubscriptionNotificationReactivatedXMLName:
+		dst = &SubscriptionNotificationReactivated{}
 
 	// Usage notifications
 	case UsageNotificationNewUsageXMLName:

@@ -2,9 +2,9 @@ package webhooks
 
 const (
 	// Account notifications.
-	AccountNotificationNewAccountXMLName              = "new_account_notification"
-	AccountNotificationUpdatedAccountXMLName          = "updated_account_notification"
-	AccountNotificationCanceledAccountXMLName         = "canceled_account_notification"
+	AccountNotificationNewXMLName                     = "new_account_notification"
+	AccountNotificationUpdatedXMLName                 = "updated_account_notification"
+	AccountNotificationCanceledXMLName                = "canceled_account_notification"
 	AccountNotificationBillingInfoUpdatedXMLName      = "billing_info_updated_notification"
 	AccountNotificationBillingInfoUpdateFailedXMLName = "billing_info_update_failed_notification"
 	AccountNotificationNewShippingAddressXMLName      = "new_shipping_address_notification"
@@ -14,21 +14,21 @@ const (
 
 // Account types.
 type (
-	// AccountNotificationNewAccount is sent when a new account is created.
+	// AccountNotificationNew is sent when a new account is created.
 	// https://dev.recurly.com/page/webhooks#section-new-account
-	AccountNotificationNewAccount struct {
+	AccountNotificationNew struct {
 		Account Account `xml:"account"`
 	}
 
-	// AccountNotificationUpdatedAccount is sent when an account is updated.
+	// AccountNotificationUpdated is sent when an account is updated.
 	// https://dev.recurly.com/page/webhooks#section-updated-account
-	AccountNotificationUpdatedAccount struct {
+	AccountNotificationUpdated struct {
 		Account Account `xml:"account"`
 	}
 
-	// AccountNotificationCanceledAccount is sent when an account is closed.
+	// AccountNotificationCanceled is sent when an account is closed.
 	// https://dev.recurly.com/page/webhooks#section-closed-account
-	AccountNotificationCanceledAccount struct {
+	AccountNotificationCanceled struct {
 		Account Account `xml:"account"`
 	}
 

@@ -6,54 +6,54 @@ import (
 
 const (
 	// Subscription notifications.
-	SubscriptionNotificationNewSubscriptionXMLName         = "new_subscription_notification"
-	SubscriptionNotificationUpdatedSubscriptionXMLName     = "updated_subscription_notification"
-	SubscriptionNotificationCanceledSubscriptionXMLName    = "canceled_subscription_notification"
-	SubscriptionNotificationExpiredSubscriptionXMLName     = "expired_subscription_notification"
-	SubscriptionNotificationRenewedSubscriptionXMLName     = "renewed_subscription_notification"
-	SubscriptionNotificationReactivatedSubscriptionXMLName = "reactivated_account_notification"
+	SubscriptionNotificationNewXMLName         = "new_subscription_notification"
+	SubscriptionNotificationUpdatedXMLName     = "updated_subscription_notification"
+	SubscriptionNotificationCanceledXMLName    = "canceled_subscription_notification"
+	SubscriptionNotificationExpiredXMLName     = "expired_subscription_notification"
+	SubscriptionNotificationRenewedXMLName     = "renewed_subscription_notification"
+	SubscriptionNotificationReactivatedXMLName = "reactivated_account_notification"
 )
 
 // Subscription types.
 type (
-	// SubscriptionNotificationNewSubscription is sent when a new subscription is created.
+	// SubscriptionNotificationNew is sent when a new subscription is created.
 	// https://dev.recurly.com/page/webhooks#section-new-subscription
-	SubscriptionNotificationNewSubscription struct {
+	SubscriptionNotificationNew struct {
 		Account      Account              `xml:"account"`
 		Subscription recurly.Subscription `xml:"subscription"`
 	}
 
-	// SubscriptionNotificationUpdatedSubscription is sent when a subscription is upgraded or downgraded.
+	// SubscriptionNotificationUpdated is sent when a subscription is upgraded or downgraded.
 	// https://dev.recurly.com/page/webhooks#section-updated-subscription
-	SubscriptionNotificationUpdatedSubscription struct {
+	SubscriptionNotificationUpdated struct {
 		Account      Account              `xml:"account"`
 		Subscription recurly.Subscription `xml:"subscription"`
 	}
 
-	// SubscriptionNotificationCanceledSubscription is sent when a subscription is canceled.
+	// SubscriptionNotificationCanceled is sent when a subscription is canceled.
 	// https://dev.recurly.com/page/webhooks#section-canceled-subscription
-	SubscriptionNotificationCanceledSubscription struct {
+	SubscriptionNotificationCanceled struct {
 		Account      Account              `xml:"account"`
 		Subscription recurly.Subscription `xml:"subscription"`
 	}
 
-	// SubscriptionNotificationExpiredSubscription is sent when a subscription is no longer valid.
+	// SubscriptionNotificationExpired is sent when a subscription is no longer valid.
 	// https://dev.recurly.com/v2.4/page/webhooks#section-expired-subscription
-	SubscriptionNotificationExpiredSubscription struct {
+	SubscriptionNotificationExpired struct {
 		Account      Account              `xml:"account"`
 		Subscription recurly.Subscription `xml:"subscription"`
 	}
 
-	// SubscriptionNotificationRenewedSubscription is sent when a subscription renew.
+	// SubscriptionNotificationRenewed is sent when a subscription renew.
 	// https://dev.recurly.com/page/webhooks#section-renewed-subscription
-	SubscriptionNotificationRenewedSubscription struct {
+	SubscriptionNotificationRenewed struct {
 		Account      Account              `xml:"account"`
 		Subscription recurly.Subscription `xml:"subscription"`
 	}
 
-	// SubscriptionNotificationReactivatedSubscription is sent when a subscription is reactivated after having been canceled.
+	// SubscriptionNotificationReactivated is sent when a subscription is reactivated after having been canceled.
 	// https://dev.recurly.com/page/webhooks#section-reactivated-subscription
-	SubscriptionNotificationReactivatedSubscription struct {
+	SubscriptionNotificationReactivated struct {
 		Account      Account              `xml:"account"`
 		Subscription recurly.Subscription `xml:"subscription"`
 	}

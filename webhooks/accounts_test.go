@@ -11,9 +11,9 @@ func TestParse_AccountNotificationNewAccount(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*AccountNotificationNewAccount); !ok {
+	} else if n, ok := result.(*AccountNotificationNew); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &AccountNotificationNewAccount{
+	} else if !reflect.DeepEqual(n, &AccountNotificationNew{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",
@@ -31,9 +31,9 @@ func TestParse_AccountNotificationUpdatedAccount(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*AccountNotificationUpdatedAccount); !ok {
+	} else if n, ok := result.(*AccountNotificationUpdated); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &AccountNotificationUpdatedAccount{
+	} else if !reflect.DeepEqual(n, &AccountNotificationUpdated{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",
@@ -51,9 +51,9 @@ func TestParse_AccountNotificationCanceledAccount(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*AccountNotificationCanceledAccount); !ok {
+	} else if n, ok := result.(*AccountNotificationCanceled); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &AccountNotificationCanceledAccount{
+	} else if !reflect.DeepEqual(n, &AccountNotificationCanceled{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",

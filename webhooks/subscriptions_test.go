@@ -20,9 +20,9 @@ func TestParse_SubscriptionNotificationNewSubscription(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*SubscriptionNotificationNewSubscription); !ok {
+	} else if n, ok := result.(*SubscriptionNotificationNew); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &SubscriptionNotificationNewSubscription{
+	} else if !reflect.DeepEqual(n, &SubscriptionNotificationNew{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",
@@ -63,9 +63,9 @@ func TestParse_SubscriptionNotificationUpdatedSubscription(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*SubscriptionNotificationUpdatedSubscription); !ok {
+	} else if n, ok := result.(*SubscriptionNotificationUpdated); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &SubscriptionNotificationUpdatedSubscription{
+	} else if !reflect.DeepEqual(n, &SubscriptionNotificationUpdated{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",
@@ -106,9 +106,9 @@ func TestParse_SubscriptionNotificationCanceledSubscription(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*SubscriptionNotificationCanceledSubscription); !ok {
+	} else if n, ok := result.(*SubscriptionNotificationCanceled); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &SubscriptionNotificationCanceledSubscription{
+	} else if !reflect.DeepEqual(n, &SubscriptionNotificationCanceled{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",
@@ -149,9 +149,9 @@ func TestParse_SubscriptionNotificationExpiredSubscription(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*SubscriptionNotificationExpiredSubscription); !ok {
+	} else if n, ok := result.(*SubscriptionNotificationExpired); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &SubscriptionNotificationExpiredSubscription{
+	} else if !reflect.DeepEqual(n, &SubscriptionNotificationExpired{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",
@@ -190,9 +190,9 @@ func TestParse_SubscriptionNotificationRenewedSubscription(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*SubscriptionNotificationRenewedSubscription); !ok {
+	} else if n, ok := result.(*SubscriptionNotificationRenewed); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &SubscriptionNotificationRenewedSubscription{
+	} else if !reflect.DeepEqual(n, &SubscriptionNotificationRenewed{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},
 			Code:        "1",
@@ -230,9 +230,9 @@ func TestParse_SubscriptionNotificationReactivatedSubscription(t *testing.T) {
 	result, err := Parse(xmlFile)
 	if err != nil {
 		t.Fatal(err)
-	} else if n, ok := result.(*SubscriptionNotificationReactivatedSubscription); !ok {
+	} else if n, ok := result.(*SubscriptionNotificationReactivated); !ok {
 		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &SubscriptionNotificationReactivatedSubscription{
+	} else if !reflect.DeepEqual(n, &SubscriptionNotificationReactivated{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",
