@@ -11,13 +11,6 @@ import (
 
 // Webhook notification constants.
 const (
-	// Subscription notifications.
-	NewSubscription      = "new_subscription_notification"
-	UpdatedSubscription  = "updated_subscription_notification"
-	RenewedSubscription  = "renewed_subscription_notification"
-	ExpiredSubscription  = "expired_subscription_notification"
-	CanceledSubscription = "canceled_subscription_notification"
-
 	// Invoice notifications.
 	NewInvoice     = "new_invoice_notification"
 	PastDueInvoice = "past_due_invoice_notification"
@@ -105,44 +98,6 @@ type Invoice struct {
 const (
 	TransactionFailureTypeDeclined  = "declined"
 	TransactionFailureTypeDuplicate = "duplicate_transaction"
-)
-
-// Subscription types.
-type (
-	// NewSubscriptionNotification is sent when a new subscription is created.
-	// https://dev.recurly.com/page/webhooks#section-new-subscription
-	NewSubscriptionNotification struct {
-		Account      Account              `xml:"account"`
-		Subscription recurly.Subscription `xml:"subscription"`
-	}
-
-	// UpdatedSubscriptionNotification is sent when a subscription is upgraded or downgraded.
-	// https://dev.recurly.com/page/webhooks#section-updated-subscription
-	UpdatedSubscriptionNotification struct {
-		Account      Account              `xml:"account"`
-		Subscription recurly.Subscription `xml:"subscription"`
-	}
-
-	// RenewedSubscriptionNotification is sent when a subscription renew.
-	// https://dev.recurly.com/page/webhooks#section-renewed-subscription
-	RenewedSubscriptionNotification struct {
-		Account      Account              `xml:"account"`
-		Subscription recurly.Subscription `xml:"subscription"`
-	}
-
-	// ExpiredSubscriptionNotification is sent when a subscription is no longer valid.
-	// https://dev.recurly.com/v2.4/page/webhooks#section-expired-subscription
-	ExpiredSubscriptionNotification struct {
-		Account      Account              `xml:"account"`
-		Subscription recurly.Subscription `xml:"subscription"`
-	}
-
-	// CanceledSubscriptionNotification is sent when a subscription is canceled.
-	// https://dev.recurly.com/page/webhooks#section-canceled-subscription
-	CanceledSubscriptionNotification struct {
-		Account      Account              `xml:"account"`
-		Subscription recurly.Subscription `xml:"subscription"`
-	}
 )
 
 // Invoice types.
@@ -245,16 +200,20 @@ func Parse(r io.Reader) (interface{}, error) {
 	case AccountNotificationDeletedShippingAddressXMLName:
 		dst = &AccountNotificationDeletedShippingAddress{}
 
-	case NewSubscription:
-		dst = &NewSubscriptionNotification{}
-	case UpdatedSubscription:
-		dst = &UpdatedSubscriptionNotification{}
-	case RenewedSubscription:
-		dst = &RenewedSubscriptionNotification{}
-	case ExpiredSubscription:
-		dst = &ExpiredSubscriptionNotification{}
-	case CanceledSubscription:
-		dst = &CanceledSubscriptionNotification{}
+	// Subscription notifications
+	case SubscriptionNotificationNewSubscriptionXMLName:
+		dst = &SubscriptionNotificationNewSubscription{}
+	case SubscriptionNotificationUpdatedSubscriptionXMLName:
+		dst = &SubscriptionNotificationUpdatedSubscription{}
+	case SubscriptionNotificationCanceledSubscriptionXMLName:
+		dst = &SubscriptionNotificationCanceledSubscription{}
+	case SubscriptionNotificationExpiredSubscriptionXMLName:
+		dst = &SubscriptionNotificationExpiredSubscription{}
+	case SubscriptionNotificationRenewedSubscriptionXMLName:
+		dst = &SubscriptionNotificationRenewedSubscription{}
+	case SubscriptionNotificationReactivatedSubscriptionXMLName:
+		dst = &SubscriptionNotificationReactivatedSubscription{}
+
 	case NewInvoice:
 		dst = &NewInvoiceNotification{}
 	case PastDueInvoice:
