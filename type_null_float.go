@@ -2,7 +2,7 @@ package recurly
 
 import "encoding/xml"
 
-// NullFloat is used for properly handling int types that could be null.
+// NullFloat is used for properly handling float types that could be null.
 type NullFloat struct {
 	Float float64
 	Valid bool
@@ -24,7 +24,7 @@ func (n *NullFloat) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
-// MarshalXML marshals NullInts greater than zero to XML. Otherwise nothing is
+// MarshalXML marshals NullFloats greater than zero to XML. Otherwise nothing is
 // marshaled.
 func (n NullFloat) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	if n.Valid {
