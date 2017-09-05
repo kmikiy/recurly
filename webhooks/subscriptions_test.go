@@ -9,7 +9,7 @@ import (
 	"github.com/kmikiy/recurly"
 )
 
-func TestParse_SubscriptionNotificationNewSubscription(t *testing.T) {
+func TestParse_SubscriptionNotificationNew(t *testing.T) {
 	activatedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:03Z")
 	canceledTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:43Z")
 	expiresTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-24T22:05:03Z")
@@ -52,7 +52,7 @@ func TestParse_SubscriptionNotificationNewSubscription(t *testing.T) {
 	}
 }
 
-func TestParse_SubscriptionNotificationUpdatedSubscription(t *testing.T) {
+func TestParse_SubscriptionNotificationUpdated(t *testing.T) {
 	activatedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:03Z")
 	canceledTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:43Z")
 	expiresTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-24T22:05:03Z")
@@ -95,7 +95,7 @@ func TestParse_SubscriptionNotificationUpdatedSubscription(t *testing.T) {
 	}
 }
 
-func TestParse_SubscriptionNotificationCanceledSubscription(t *testing.T) {
+func TestParse_SubscriptionNotificationCanceled(t *testing.T) {
 	activatedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:03Z")
 	canceledTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:43Z")
 	expiresTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-24T22:05:03Z")
@@ -138,7 +138,7 @@ func TestParse_SubscriptionNotificationCanceledSubscription(t *testing.T) {
 	}
 }
 
-func TestParse_SubscriptionNotificationExpiredSubscription(t *testing.T) {
+func TestParse_SubscriptionNotificationExpired(t *testing.T) {
 	activatedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:03Z")
 	canceledTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:43Z")
 	expiresTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-24T22:05:03Z")
@@ -181,7 +181,7 @@ func TestParse_SubscriptionNotificationExpiredSubscription(t *testing.T) {
 	}
 }
 
-func TestParse_SubscriptionNotificationRenewedSubscription(t *testing.T) {
+func TestParse_SubscriptionNotificationRenewed(t *testing.T) {
 	activatedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-07-22T20:42:05Z")
 	startedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-22T20:42:05Z")
 	endsTs, _ := time.Parse(recurly.DateTimeFormat, "2010-10-22T20:42:05Z")
@@ -221,7 +221,7 @@ func TestParse_SubscriptionNotificationRenewedSubscription(t *testing.T) {
 	}
 }
 
-func TestParse_SubscriptionNotificationReactivatedSubscription(t *testing.T) {
+func TestParse_SubscriptionNotificationReactivated(t *testing.T) {
 	activatedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-07-22T20:42:05Z")
 	startedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-22T20:42:05Z")
 	endsTs, _ := time.Parse(recurly.DateTimeFormat, "2010-10-22T20:42:05Z")

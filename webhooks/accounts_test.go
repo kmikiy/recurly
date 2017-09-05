@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestParse_AccountNotificationNewAccount(t *testing.T) {
+func TestParse_AccountNotificationNew(t *testing.T) {
 	xmlFile := MustOpenFile("testdata/accounts/new_account_notification.xml")
 	result, err := Parse(xmlFile)
 	if err != nil {
@@ -26,7 +26,7 @@ func TestParse_AccountNotificationNewAccount(t *testing.T) {
 	}
 }
 
-func TestParse_AccountNotificationUpdatedAccount(t *testing.T) {
+func TestParse_AccountNotificationUpdated(t *testing.T) {
 	xmlFile := MustOpenFile("testdata/accounts/updated_account_notification.xml")
 	result, err := Parse(xmlFile)
 	if err != nil {
@@ -46,7 +46,7 @@ func TestParse_AccountNotificationUpdatedAccount(t *testing.T) {
 	}
 }
 
-func TestParse_AccountNotificationCanceledAccount(t *testing.T) {
+func TestParse_AccountNotificationCanceled(t *testing.T) {
 	xmlFile := MustOpenFile("testdata/accounts/canceled_account_notification.xml")
 	result, err := Parse(xmlFile)
 	if err != nil {
