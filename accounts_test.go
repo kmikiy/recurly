@@ -8,8 +8,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/kmikiy/recurly"
 )
 
 // TestAccountEncoding ensures structs are encoded to XML properly.
@@ -215,7 +213,7 @@ func TestAccounts_Get(t *testing.T) {
 		t.Fatal("expected get accounts to return OK")
 	}
 
-	tsCreated, _ := time.Parse(recurly.DateTimeFormat, "2011-10-25T12:00:00Z")
+	tsCreated, _ := time.Parse(DateTimeFormat, "2011-10-25T12:00:00Z")
 	tsUpdated, _ := time.Parse(DateTimeFormat, "2016-07-11T17:56:24Z")
 	if !reflect.DeepEqual(a, &Account{
 		XMLName:   xml.Name{Local: "account"},
