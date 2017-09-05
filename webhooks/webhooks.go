@@ -11,9 +11,6 @@ import (
 
 // Webhook notification constants.
 const (
-	// Account notifications.
-	BillingInfoUpdated = "billing_info_updated_notification"
-
 	// Subscription notifications.
 	NewSubscription      = "new_subscription_notification"
 	UpdatedSubscription  = "updated_subscription_notification"
@@ -45,6 +42,25 @@ type Account struct {
 	FirstName   string   `xml:"first_name,omitempty"`
 	LastName    string   `xml:"last_name,omitempty"`
 	CompanyName string   `xml:"company_name,omitempty"`
+	Phone       string   `xml:"phone,omitempty"`
+}
+
+// ShippingAddress represents the shipping_address object sent in webhooks.
+type ShippingAddress struct {
+	XMLName     xml.Name `xml:"shipping_address"`
+	ID          int      `xml:"id,omitempty"`
+	Nickname    string   `xml:"nickname,omitempty"`
+	FirstName   string   `xml:"first_name,omitempty"`
+	LastName    string   `xml:"last_name,omitempty"`
+	CompanyName string   `xml:"company_name,omitempty"`
+	VATNumber   string   `xml:"vat_number,omitempty"`
+	Street      string   `xml:"street1,omitempty"`
+	Street2     string   `xml:"street2,omitempty"`
+	City        string   `xml:"city,omitempty"`
+	State       string   `xml:"state,omitempty"`
+	ZIP         string   `xml:"zip,omitempty"`
+	Country     string   `xml:"country,omitempty"`
+	Email       string   `xml:"email,omitempty"`
 	Phone       string   `xml:"phone,omitempty"`
 }
 
@@ -89,15 +105,6 @@ type Invoice struct {
 const (
 	TransactionFailureTypeDeclined  = "declined"
 	TransactionFailureTypeDuplicate = "duplicate_transaction"
-)
-
-// Account types.
-type (
-	// BillingInfoUpdatedNotification is sent when a customer updates or adds billing information.
-	// https://dev.recurly.com/page/webhooks#section-updated-billing-information
-	BillingInfoUpdatedNotification struct {
-		Account Account `xml:"account"`
-	}
 )
 
 // Subscription types.
@@ -220,8 +227,24 @@ func Parse(r io.Reader) (interface{}, error) {
 
 	var dst interface{}
 	switch n.XMLName.Local {
-	case BillingInfoUpdated:
-		dst = &BillingInfoUpdatedNotification{}
+	// Account notifications
+	case AccountNotificationNewAccountXMLName:
+		dst = &AccountNotificationNewAccount{}
+	case AccountNotificationUpdatedAccountXMLName:
+		dst = &AccountNotificationUpdatedAccount{}
+	case AccountNotificationCanceledAccountXMLName:
+		dst = &AccountNotificationCanceledAccount{}
+	case AccountNotificationBillingInfoUpdatedXMLName:
+		dst = &AccountNotificationBillingInfoUpdated{}
+	case AccountNotificationBillingInfoUpdateFailedXMLName:
+		dst = &AccountNotificationBillingInfoUpdateFailed{}
+	case AccountNotificationNewShippingAddressXMLName:
+		dst = &AccountNotificationNewShippingAddress{}
+	case AccountNotificationUpdatedShippingAddressXMLName:
+		dst = &AccountNotificationUpdatedShippingAddress{}
+	case AccountNotificationDeletedShippingAddressXMLName:
+		dst = &AccountNotificationDeletedShippingAddress{}
+
 	case NewSubscription:
 		dst = &NewSubscriptionNotification{}
 	case UpdatedSubscription:

@@ -10,26 +10,6 @@ import (
 	"github.com/kmikiy/recurly"
 )
 
-func TestParse_BillingInfoUpdatedNotification(t *testing.T) {
-	xmlFile := MustOpenFile("testdata/billing_info_updated_notification.xml")
-	result, err := Parse(xmlFile)
-	if err != nil {
-		t.Fatal(err)
-	} else if n, ok := result.(*BillingInfoUpdatedNotification); !ok {
-		t.Fatalf("unexpected type: %T, result")
-	} else if !reflect.DeepEqual(n, &BillingInfoUpdatedNotification{
-		Account: Account{
-			XMLName:   xml.Name{Local: "account"},
-			Code:      "1",
-			Email:     "verena@example.com",
-			FirstName: "Verena",
-			LastName:  "Example",
-		},
-	}) {
-		t.Fatalf("unexpected notification: %#v", n)
-	}
-}
-
 func TestParse_NewSubscriptionNotification(t *testing.T) {
 	activatedTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:03Z")
 	canceledTs, _ := time.Parse(recurly.DateTimeFormat, "2010-09-23T22:05:43Z")
