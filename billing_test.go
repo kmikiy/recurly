@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
-
-	"github.com/blacklightcms/recurly"
 )
 
 // TestBillingEncoding ensures structs are encoded to XML properly.
@@ -18,23 +16,23 @@ import (
 // have zero values that we want to send.
 func TestBilling_Encoding(t *testing.T) {
 	tests := []struct {
-		v        recurly.Billing
+		v        Billing
 		expected string
 	}{
-		{v: recurly.Billing{}, expected: "<billing_info></billing_info>"},
-		{v: recurly.Billing{Token: "507c7f79bcf86cd7994f6c0e"}, expected: "<billing_info><token_id>507c7f79bcf86cd7994f6c0e</token_id></billing_info>"},
-		{v: recurly.Billing{FirstName: "Verena", LastName: "Example"}, expected: "<billing_info><first_name>Verena</first_name><last_name>Example</last_name></billing_info>"},
-		{v: recurly.Billing{Address: "123 Main St."}, expected: "<billing_info><address1>123 Main St.</address1></billing_info>"},
-		{v: recurly.Billing{Address2: "Unit A"}, expected: "<billing_info><address2>Unit A</address2></billing_info>"},
-		{v: recurly.Billing{City: "San Francisco"}, expected: "<billing_info><city>San Francisco</city></billing_info>"},
-		{v: recurly.Billing{State: "CA"}, expected: "<billing_info><state>CA</state></billing_info>"},
-		{v: recurly.Billing{Zip: "94105"}, expected: "<billing_info><zip>94105</zip></billing_info>"},
-		{v: recurly.Billing{Country: "US"}, expected: "<billing_info><country>US</country></billing_info>"},
-		{v: recurly.Billing{Phone: "555-555-5555"}, expected: "<billing_info><phone>555-555-5555</phone></billing_info>"},
-		{v: recurly.Billing{VATNumber: "abc"}, expected: "<billing_info><vat_number>abc</vat_number></billing_info>"},
-		{v: recurly.Billing{IPAddress: net.ParseIP("127.0.0.1")}, expected: "<billing_info><ip_address>127.0.0.1</ip_address></billing_info>"},
-		{v: recurly.Billing{Number: 4111111111111111, Month: 5, Year: 2020, VerificationValue: 111}, expected: "<billing_info><number>4111111111111111</number><month>5</month><year>2020</year><verification_value>111</verification_value></billing_info>"},
-		{v: recurly.Billing{RoutingNumber: "065400137", AccountNumber: "0123456789", AccountType: "checking"}, expected: "<billing_info><routing_number>065400137</routing_number><account_number>0123456789</account_number><account_type>checking</account_type></billing_info>"},
+		{v: Billing{}, expected: "<billing_info></billing_info>"},
+		{v: Billing{Token: "507c7f79bcf86cd7994f6c0e"}, expected: "<billing_info><token_id>507c7f79bcf86cd7994f6c0e</token_id></billing_info>"},
+		{v: Billing{FirstName: "Verena", LastName: "Example"}, expected: "<billing_info><first_name>Verena</first_name><last_name>Example</last_name></billing_info>"},
+		{v: Billing{Address: "123 Main St."}, expected: "<billing_info><address1>123 Main St.</address1></billing_info>"},
+		{v: Billing{Address2: "Unit A"}, expected: "<billing_info><address2>Unit A</address2></billing_info>"},
+		{v: Billing{City: "San Francisco"}, expected: "<billing_info><city>San Francisco</city></billing_info>"},
+		{v: Billing{State: "CA"}, expected: "<billing_info><state>CA</state></billing_info>"},
+		{v: Billing{Zip: "94105"}, expected: "<billing_info><zip>94105</zip></billing_info>"},
+		{v: Billing{Country: "US"}, expected: "<billing_info><country>US</country></billing_info>"},
+		{v: Billing{Phone: "555-555-5555"}, expected: "<billing_info><phone>555-555-5555</phone></billing_info>"},
+		{v: Billing{VATNumber: "abc"}, expected: "<billing_info><vat_number>abc</vat_number></billing_info>"},
+		{v: Billing{IPAddress: net.ParseIP("127.0.0.1")}, expected: "<billing_info><ip_address>127.0.0.1</ip_address></billing_info>"},
+		{v: Billing{Number: 4111111111111111, Month: 5, Year: 2020, VerificationValue: 111}, expected: "<billing_info><number>4111111111111111</number><month>5</month><year>2020</year><verification_value>111</verification_value></billing_info>"},
+		{v: Billing{RoutingNumber: "065400137", AccountNumber: "0123456789", AccountType: "checking"}, expected: "<billing_info><routing_number>065400137</routing_number><account_number>0123456789</account_number><account_type>checking</account_type></billing_info>"},
 	}
 
 	for _, tt := range tests {
@@ -48,20 +46,20 @@ func TestBilling_Encoding(t *testing.T) {
 }
 
 func TestBilling_Type(t *testing.T) {
-	b0 := recurly.Billing{
+	b0 := Billing{
 		FirstSix: 411111,
 		LastFour: "1111",
 		Month:    11,
 		Year:     2020,
 	}
 
-	b1 := recurly.Billing{
+	b1 := Billing{
 		NameOnAccount: "Acme, Inc",
 		RoutingNumber: "123456780",
 		AccountNumber: "111111111",
 	}
 
-	var b2 recurly.Billing
+	var b2 Billing
 
 	if b0.Type() != "card" {
 		t.Fatalf("unexpected type: %s", b0.Type())
@@ -110,7 +108,7 @@ func TestBilling_Get(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
 		t.Fatal("expected get billing info to return OK")
-	} else if !reflect.DeepEqual(b, &recurly.Billing{
+	} else if !reflect.DeepEqual(b, &Billing{
 		XMLName:          xml.Name{Local: "billing_info"},
 		FirstName:        "Verena",
 		LastName:         "Example",
@@ -166,7 +164,7 @@ func TestBilling_Get_ACH(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
 		t.Fatal("expected get billing info to return OK")
-	} else if !reflect.DeepEqual(b, &recurly.Billing{
+	} else if !reflect.DeepEqual(b, &Billing{
 		XMLName:   xml.Name{Local: "billing_info"},
 		FirstName: "Verena",
 		LastName:  "Example",
@@ -243,7 +241,7 @@ func TestBilling_Create_WithToken(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
 		t.Fatal("expected creating billing info to return OK")
-	} else if !reflect.DeepEqual(b, &recurly.Billing{
+	} else if !reflect.DeepEqual(b, &Billing{
 		XMLName:          xml.Name{Local: "billing_info"},
 		FirstName:        "Verena",
 		LastName:         "Example",
@@ -284,7 +282,7 @@ func TestBilling_Create_WithCC(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><billing_info></billing_info>`)
 	})
 
-	resp, _, err := client.Billing.Create("1", recurly.Billing{
+	resp, _, err := client.Billing.Create("1", Billing{
 		FirstName: "Verena",
 		LastName:  "Example",
 		Address:   "123 Main St.",
@@ -323,7 +321,7 @@ func TestBilling_Create_WithBankAccount(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><billing_info></billing_info>`)
 	})
 
-	resp, _, err := client.Billing.Create("134", recurly.Billing{
+	resp, _, err := client.Billing.Create("134", Billing{
 		FirstName:     "Verena",
 		LastName:      "Example",
 		Address:       "123 Main St.",
@@ -393,7 +391,7 @@ func TestBilling_Update_InvalidToken(t *testing.T) {
 
 	if resp.IsOK() {
 		t.Fatal("expected updating billing info with invalid token to return error")
-	} else if !reflect.DeepEqual(resp.Errors, []recurly.Error{
+	} else if !reflect.DeepEqual(resp.Errors, []Error{
 		{
 			Symbol:  "token_invalid",
 			Message: "Token is either invalid or expired",
@@ -422,7 +420,7 @@ func TestBilling_Update_WithCC(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><billing_info></billing_info>`)
 	})
 
-	resp, _, err := client.Billing.Update("1", recurly.Billing{
+	resp, _, err := client.Billing.Update("1", Billing{
 		FirstName: "Verena",
 		LastName:  "Example",
 		Address:   "123 Main St.",
@@ -470,7 +468,7 @@ func TestBilling_Update_WithBankAccount(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><billing_info></billing_info>`)
 	})
 
-	resp, _, err := client.Billing.Update("134", recurly.Billing{
+	resp, _, err := client.Billing.Update("134", Billing{
 		FirstName:     "Verena",
 		LastName:      "Example",
 		Address:       "123 Main St.",

@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -9,8 +9,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/blacklightcms/recurly"
 )
 
 // TestAdjustmentEncoding ensures structs are encoded to XML properly.
@@ -19,17 +17,17 @@ import (
 // have zero values that we want to send.
 func TestAdjustments_Encoding(t *testing.T) {
 	tests := []struct {
-		v        recurly.Adjustment
+		v        Adjustment
 		expected string
 	}{
 		// Unit amount in cents and currency are required fields. They should always be present.
-		{v: recurly.Adjustment{}, expected: "<adjustment><unit_amount_in_cents>0</unit_amount_in_cents><currency></currency></adjustment>"},
-		{v: recurly.Adjustment{UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency></adjustment>"},
-		{v: recurly.Adjustment{Description: "Charge for extra bandwidth", UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><description>Charge for extra bandwidth</description><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency></adjustment>"},
-		{v: recurly.Adjustment{Quantity: 1, UnitAmountInCents: 2000, Currency: "CAD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><quantity>1</quantity><currency>CAD</currency></adjustment>"},
-		{v: recurly.Adjustment{AccountingCode: "bandwidth", UnitAmountInCents: 2000, Currency: "CAD"}, expected: "<adjustment><accounting_code>bandwidth</accounting_code><unit_amount_in_cents>2000</unit_amount_in_cents><currency>CAD</currency></adjustment>"},
-		{v: recurly.Adjustment{TaxExempt: recurly.NewBool(false), UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency><tax_exempt>false</tax_exempt></adjustment>"},
-		{v: recurly.Adjustment{TaxCode: "digital", UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency><tax_code>digital</tax_code></adjustment>"},
+		{v: Adjustment{}, expected: "<adjustment><unit_amount_in_cents>0</unit_amount_in_cents><currency></currency></adjustment>"},
+		{v: Adjustment{UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency></adjustment>"},
+		{v: Adjustment{Description: "Charge for extra bandwidth", UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><description>Charge for extra bandwidth</description><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency></adjustment>"},
+		{v: Adjustment{Quantity: 1, UnitAmountInCents: 2000, Currency: "CAD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><quantity>1</quantity><currency>CAD</currency></adjustment>"},
+		{v: Adjustment{AccountingCode: "bandwidth", UnitAmountInCents: 2000, Currency: "CAD"}, expected: "<adjustment><accounting_code>bandwidth</accounting_code><unit_amount_in_cents>2000</unit_amount_in_cents><currency>CAD</currency></adjustment>"},
+		{v: Adjustment{TaxExempt: NewBool(false), UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency><tax_exempt>false</tax_exempt></adjustment>"},
+		{v: Adjustment{TaxCode: "digital", UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency><tax_code>digital</tax_code></adjustment>"},
 	}
 
 	for _, tt := range tests {
@@ -81,7 +79,7 @@ func TestAdjustments_List(t *testing.T) {
 			</adjustments>`)
 	})
 
-	resp, adjustments, err := client.Adjustments.List("100", recurly.Params{"per_page": 1})
+	resp, adjustments, err := client.Adjustments.List("100", Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
@@ -92,8 +90,8 @@ func TestAdjustments_List(t *testing.T) {
 		t.Fatalf("unexpected cursor: %s", resp.Next())
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-08-31T03:30:00Z")
-	if !reflect.DeepEqual(adjustments, []recurly.Adjustment{
+	ts, _ := time.Parse(DateTimeFormat, "2011-08-31T03:30:00Z")
+	if !reflect.DeepEqual(adjustments, []Adjustment{
 		{
 			AccountCode:            "100",
 			InvoiceNumber:          1108,
@@ -108,10 +106,10 @@ func TestAdjustments_List(t *testing.T) {
 			TaxInCents:             180,
 			TotalInCents:           2180,
 			Currency:               "USD",
-			Taxable:                recurly.NewBool(false),
-			TaxExempt:              recurly.NewBool(false),
-			StartDate:              recurly.NewTime(ts),
-			CreatedAt:              recurly.NewTime(ts),
+			Taxable:                NewBool(false),
+			TaxExempt:              NewBool(false),
+			StartDate:              NewTime(ts),
+			CreatedAt:              NewTime(ts),
 		},
 	}) {
 		t.Fatalf("unexpected adjustments: %v", adjustments)
@@ -188,8 +186,8 @@ func TestAdjustments_Get(t *testing.T) {
 		t.Fatal("expected get adjustment to return OK")
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2015-02-04T23:13:07Z")
-	if !reflect.DeepEqual(adjustment, &recurly.Adjustment{
+	ts, _ := time.Parse(DateTimeFormat, "2015-02-04T23:13:07Z")
+	if !reflect.DeepEqual(adjustment, &Adjustment{
 		AccountCode:            "100",
 		InvoiceNumber:          1108,
 		UUID:                   "626db120a84102b1809909071c701c60", // UUID has been sanitizzed
@@ -203,12 +201,12 @@ func TestAdjustments_Get(t *testing.T) {
 		TaxInCents:             175,
 		TotalInCents:           2175,
 		Currency:               "USD",
-		Taxable:                recurly.NewBool(false),
+		Taxable:                NewBool(false),
 		TaxType:                "usst",
 		TaxRegion:              "CA",
 		TaxRate:                0.0875,
-		TaxExempt:              recurly.NewBool(false),
-		TaxDetails: []recurly.TaxDetail{
+		TaxExempt:              NewBool(false),
+		TaxDetails: []TaxDetail{
 			{
 				XMLName:    xml.Name{Local: "tax_detail"},
 				Name:       "california",
@@ -237,8 +235,8 @@ func TestAdjustments_Get(t *testing.T) {
 				TaxInCents: 25,
 			},
 		},
-		StartDate: recurly.NewTime(ts),
-		CreatedAt: recurly.NewTime(ts),
+		StartDate: NewTime(ts),
+		CreatedAt: NewTime(ts),
 	}) {
 		t.Fatalf("unexpected adjustment: %v", adjustment)
 	}
@@ -276,7 +274,7 @@ func TestAdjustments_Create(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><adjustment></adjustment>`)
 	})
 
-	resp, _, err := client.Adjustments.Create("1", recurly.Adjustment{})
+	resp, _, err := client.Adjustments.Create("1", Adjustment{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.StatusCode != 201 {
@@ -306,7 +304,7 @@ func TestAdjustments_Credit(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><adjustment></adjustment>`)
 	})
 
-	resp, _, err := client.Adjustments.Create("1", recurly.Adjustment{UnitAmountInCents: -100, Description: "Description", Currency: "USD"})
+	resp, _, err := client.Adjustments.Create("1", Adjustment{UnitAmountInCents: -100, Description: "Description", Currency: "USD"})
 	if !invoked {
 		t.Fatal("handler not invoked")
 	} else if err != nil {

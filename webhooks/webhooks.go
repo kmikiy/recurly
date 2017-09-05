@@ -6,7 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/blacklightcms/recurly"
+	"github.com/kmikiy/recurly"
 )
 
 // Webhook notification constants.

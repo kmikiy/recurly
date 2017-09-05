@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -9,8 +9,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/blacklightcms/recurly"
 )
 
 // TestTransactionEncoding ensures structs are encoded to XML properly.
@@ -18,7 +16,7 @@ import (
 // fields are handled properly -- including types like booleans and integers which
 // have zero values that we want to send.
 func TestTransactions_Encoding(t *testing.T) {
-	var transaction recurly.Transaction
+	var transaction Transaction
 	buf, err := xml.Marshal(transaction)
 	if err != nil {
 		t.Fatal(err)
@@ -94,7 +92,7 @@ func TestTransactions_List(t *testing.T) {
         </transactions>`)
 	})
 
-	r, transactions, err := client.Transactions.List(recurly.Params{"per_page": 1})
+	r, transactions, err := client.Transactions.List(Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("TestTransactionsList Error: Error occurred making API call. Err: %s", err)
 	} else if r.IsError() {
@@ -103,7 +101,7 @@ func TestTransactions_List(t *testing.T) {
 		t.Fatalf("unexpected per_page: %s", pp)
 	}
 
-	if !reflect.DeepEqual(transactions, []recurly.Transaction{
+	if !reflect.DeepEqual(transactions, []Transaction{
 		{
 			InvoiceNumber:    1108,
 			SubscriptionUUID: "17caaca1716f33572edc8146e0aaefde",
@@ -116,31 +114,31 @@ func TestTransactions_List(t *testing.T) {
 			PaymentMethod:    "credit_card",
 			Reference:        "5416477",
 			Source:           "subscription",
-			Recurring:        recurly.NewBool(true),
+			Recurring:        NewBool(true),
 			Test:             true,
-			Voidable:         recurly.NewBool(true),
-			Refundable:       recurly.NewBool(true),
+			Voidable:         NewBool(true),
+			Refundable:       NewBool(true),
 			IPAddress:        net.ParseIP("127.0.0.1"),
-			CVVResult: recurly.CVVResult{
-				recurly.TransactionResult{
+			CVVResult: CVVResult{
+				TransactionResult{
 					Code:    "M",
 					Message: "Match",
 				},
 			},
-			AVSResult: recurly.AVSResult{
-				recurly.TransactionResult{
+			AVSResult: AVSResult{
+				TransactionResult{
 					Code:    "D",
 					Message: "Street address and postal code match.",
 				},
 			},
-			CreatedAt: recurly.NewTime(time.Date(2015, time.June, 10, 15, 25, 6, 0, time.UTC)),
-			Account: recurly.Account{
+			CreatedAt: NewTime(time.Date(2015, time.June, 10, 15, 25, 6, 0, time.UTC)),
+			Account: Account{
 				XMLName:   xml.Name{Local: "account"},
 				Code:      "1",
 				FirstName: "Verena",
 				LastName:  "Example",
 				Email:     "verena@test.com",
-				BillingInfo: &recurly.Billing{
+				BillingInfo: &Billing{
 					XMLName:   xml.Name{Local: "billing_info"},
 					FirstName: "Verena",
 					LastName:  "Example",
@@ -227,7 +225,7 @@ func TestTransactions_ListAccount(t *testing.T) {
         </transactions>`)
 	})
 
-	r, transactions, err := client.Transactions.ListAccount("1", recurly.Params{"per_page": 1})
+	r, transactions, err := client.Transactions.ListAccount("1", Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -236,7 +234,7 @@ func TestTransactions_ListAccount(t *testing.T) {
 		t.Fatalf("unexpected per_page: %s", pp)
 	}
 
-	if !reflect.DeepEqual(transactions, []recurly.Transaction{
+	if !reflect.DeepEqual(transactions, []Transaction{
 		{
 			InvoiceNumber:    1108,
 			SubscriptionUUID: "17caaca1716f33572edc8146e0aaefde",
@@ -249,31 +247,31 @@ func TestTransactions_ListAccount(t *testing.T) {
 			PaymentMethod:    "credit_card",
 			Reference:        "5416477",
 			Source:           "subscription",
-			Recurring:        recurly.NewBool(true),
+			Recurring:        NewBool(true),
 			Test:             true,
-			Voidable:         recurly.NewBool(true),
-			Refundable:       recurly.NewBool(true),
+			Voidable:         NewBool(true),
+			Refundable:       NewBool(true),
 			IPAddress:        net.ParseIP("127.0.0.1"),
-			CVVResult: recurly.CVVResult{
-				recurly.TransactionResult{
+			CVVResult: CVVResult{
+				TransactionResult{
 					Code:    "M",
 					Message: "Match",
 				},
 			},
-			AVSResult: recurly.AVSResult{
-				recurly.TransactionResult{
+			AVSResult: AVSResult{
+				TransactionResult{
 					Code:    "D",
 					Message: "Street address and postal code match.",
 				},
 			},
-			CreatedAt: recurly.NewTime(time.Date(2015, time.June, 10, 15, 25, 6, 0, time.UTC)),
-			Account: recurly.Account{
+			CreatedAt: NewTime(time.Date(2015, time.June, 10, 15, 25, 6, 0, time.UTC)),
+			Account: Account{
 				XMLName:   xml.Name{Local: "account"},
 				Code:      "1",
 				FirstName: "Verena",
 				LastName:  "Example",
 				Email:     "verena@test.com",
-				BillingInfo: &recurly.Billing{
+				BillingInfo: &Billing{
 					XMLName:   xml.Name{Local: "billing_info"},
 					FirstName: "Verena",
 					LastName:  "Example",
@@ -365,7 +363,7 @@ func TestTransactions_Get(t *testing.T) {
 		t.Fatal("expected get transaction to return OK")
 	}
 
-	if !reflect.DeepEqual(transaction, &recurly.Transaction{
+	if !reflect.DeepEqual(transaction, &Transaction{
 		InvoiceNumber:    1108,
 		SubscriptionUUID: "17caaca1716f33572edc8146e0aaefde",
 		UUID:             "a13acd8fe4294916b79aec87b7ea441f", // UUID has been sanitized
@@ -377,31 +375,31 @@ func TestTransactions_Get(t *testing.T) {
 		PaymentMethod:    "credit_card",
 		Reference:        "5416477",
 		Source:           "subscription",
-		Recurring:        recurly.NewBool(true),
+		Recurring:        NewBool(true),
 		Test:             true,
-		Voidable:         recurly.NewBool(true),
-		Refundable:       recurly.NewBool(true),
+		Voidable:         NewBool(true),
+		Refundable:       NewBool(true),
 		IPAddress:        net.ParseIP("127.0.0.1"),
-		CVVResult: recurly.CVVResult{
-			recurly.TransactionResult{
+		CVVResult: CVVResult{
+			TransactionResult{
 				Code:    "M",
 				Message: "Match",
 			},
 		},
-		AVSResult: recurly.AVSResult{
-			recurly.TransactionResult{
+		AVSResult: AVSResult{
+			TransactionResult{
 				Code:    "D",
 				Message: "Street address and postal code match.",
 			},
 		},
-		CreatedAt: recurly.NewTime(time.Date(2015, time.June, 10, 15, 25, 6, 0, time.UTC)),
-		Account: recurly.Account{
+		CreatedAt: NewTime(time.Date(2015, time.June, 10, 15, 25, 6, 0, time.UTC)),
+		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
 			Code:      "1",
 			FirstName: "Verena",
 			LastName:  "Example",
 			Email:     "verena@test.com",
-			BillingInfo: &recurly.Billing{
+			BillingInfo: &Billing{
 				XMLName:   xml.Name{Local: "billing_info"},
 				FirstName: "Verena",
 				LastName:  "Example",
@@ -463,10 +461,10 @@ func TestTransactions_New(t *testing.T) {
 	})
 
 	r, _, err := client.Transactions.Create(
-		recurly.Transaction{
+		Transaction{
 			AmountInCents: 100,
 			Currency:      "USD",
-			Account: recurly.Account{
+			Account: Account{
 				Code: "25",
 			},
 		})
@@ -519,12 +517,12 @@ func TestTransactions_Err_FraudCard(t *testing.T) {
 			</errors>`)
 	})
 
-	r, transaction, err := client.Transactions.Create(recurly.Transaction{
+	r, transaction, err := client.Transactions.Create(Transaction{
 		AmountInCents: 100,
 		Currency:      "USD",
-		Account: recurly.Account{
+		Account: Account{
 			Code: "25",
-			BillingInfo: &recurly.Billing{
+			BillingInfo: &Billing{
 				FirstName: "Verena",
 				LastName:  "Example",
 				Number:    4000000000000085,
@@ -537,14 +535,14 @@ func TestTransactions_Err_FraudCard(t *testing.T) {
 		t.Fatalf("error occurred making API call. Err: %s", err)
 	} else if r.IsOK() {
 		t.Fatal("expected create fraudulent transaction to return error")
-	} else if !reflect.DeepEqual(transaction, &recurly.Transaction{
+	} else if !reflect.DeepEqual(transaction, &Transaction{
 		UUID:          "3054a79e4c3ab4699f95be455f8653bb",
 		Action:        "purchase",
 		AmountInCents: 100,
 		Currency:      "USD",
 		Status:        "declined",
 		PaymentMethod: "credit_card",
-		TransactionError: &recurly.TransactionError{
+		TransactionError: &TransactionError{
 			XMLName:         xml.Name{Local: "transaction_error"},
 			ErrorCode:       "fraud_gateway",
 			ErrorCategory:   "fraud",
@@ -557,35 +555,35 @@ func TestTransactions_Err_FraudCard(t *testing.T) {
 }
 
 func TestCVV(t *testing.T) {
-	c := recurly.CVVResult{recurly.TransactionResult{Code: "M"}}
+	c := CVVResult{TransactionResult{Code: "M"}}
 	if !c.IsMatch() {
 		t.Fatalf("expected %q code to be match", "M")
 	} else if c.IsNoMatch() || c.NotProcessed() || c.ShouldHaveBeenPresent() || c.UnableToProcess() {
 		t.Fatalf("expected %q code to ONLY be match", "M")
 	}
 
-	c = recurly.CVVResult{recurly.TransactionResult{Code: "N"}}
+	c = CVVResult{TransactionResult{Code: "N"}}
 	if !c.IsNoMatch() {
 		t.Fatalf("expected %q code to not be a match", "N")
 	} else if c.IsMatch() || c.NotProcessed() || c.ShouldHaveBeenPresent() || c.UnableToProcess() {
 		t.Fatalf("expected %q code to ONLY be match", "N")
 	}
 
-	c = recurly.CVVResult{recurly.TransactionResult{Code: "P"}}
+	c = CVVResult{TransactionResult{Code: "P"}}
 	if !c.NotProcessed() {
 		t.Fatalf("expected %q code to not be a match", "P")
 	} else if c.IsMatch() || c.IsNoMatch() || c.ShouldHaveBeenPresent() || c.UnableToProcess() {
 		t.Fatalf("expected %q code to ONLY be match", "P")
 	}
 
-	c = recurly.CVVResult{recurly.TransactionResult{Code: "S"}}
+	c = CVVResult{TransactionResult{Code: "S"}}
 	if !c.ShouldHaveBeenPresent() {
 		t.Fatalf("expected %q code to not be a match", "S")
 	} else if c.IsMatch() || c.IsNoMatch() || c.NotProcessed() || c.UnableToProcess() {
 		t.Fatalf("expected %q code to ONLY be match", "S")
 	}
 
-	c = recurly.CVVResult{recurly.TransactionResult{Code: "U"}}
+	c = CVVResult{TransactionResult{Code: "U"}}
 	if !c.UnableToProcess() {
 		t.Fatalf("expected %q code to not be a match", "U")
 	} else if c.IsMatch() || c.IsNoMatch() || c.NotProcessed() || c.ShouldHaveBeenPresent() {

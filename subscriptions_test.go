@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -8,8 +8,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/blacklightcms/recurly"
 )
 
 // TestSubscriptionsEncoding ensures structs are encoded to XML properly.
@@ -17,9 +15,9 @@ import (
 // fields are handled properly -- including types like booleans and integers which
 // have zero values that we want to send.
 func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2015-06-03T13:42:23.764061Z")
+	ts, _ := time.Parse(DateTimeFormat, "2015-06-03T13:42:23.764061Z")
 	tests := []struct {
-		v        recurly.NewSubscription
+		v        NewSubscription
 		expected string
 	}{
 		// Plan code, account, and currency are required fields. They should always be present.
@@ -27,11 +25,11 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code></plan_code><account></account><currency></currency></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
-					BillingInfo: &recurly.Billing{
+					BillingInfo: &Billing{
 						Token: "507c7f79bcf86cd7994f6c0e",
 					},
 				},
@@ -39,13 +37,13 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code><billing_info><token_id>507c7f79bcf86cd7994f6c0e</token_id></billing_info></account><currency></currency></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
-				SubscriptionAddOns: &[]recurly.SubscriptionAddOn{
+				SubscriptionAddOns: &[]SubscriptionAddOn{
 					{
 						Code:              "extra_users",
 						UnitAmountInCents: 1000,
@@ -56,10 +54,10 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><subscription_add_ons><subscription_add_on><add_on_code>extra_users</add_on_code><unit_amount_in_cents>1000</unit_amount_in_cents><quantity>2</quantity></subscription_add_on></subscription_add_ons><currency>USD</currency></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				CouponCode: "promo145",
@@ -67,10 +65,10 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><coupon_code>promo145</coupon_code><currency>USD</currency></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				UnitAmountInCents: 800,
@@ -78,10 +76,10 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><unit_amount_in_cents>800</unit_amount_in_cents><currency>USD</currency></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				Quantity: 8,
@@ -89,32 +87,32 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><quantity>8</quantity></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
-				TrialEndsAt: recurly.NewTime(ts),
+				TrialEndsAt: NewTime(ts),
 			},
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><trial_ends_at>2015-06-03T13:42:23Z</trial_ends_at></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
-				StartsAt: recurly.NewTime(ts),
+				StartsAt: NewTime(ts),
 			},
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><starts_at>2015-06-03T13:42:23Z</starts_at></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				TotalBillingCycles: 24,
@@ -122,21 +120,21 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><total_billing_cycles>24</total_billing_cycles></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
-				FirstRenewalDate: recurly.NewTime(ts),
+				FirstRenewalDate: NewTime(ts),
 			},
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><first_renewal_date>2015-06-03T13:42:23Z</first_renewal_date></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				CollectionMethod: "automatic",
@@ -144,32 +142,32 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><collection_method>automatic</collection_method></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
-				NetTerms: recurly.NewInt(30),
+				NetTerms: NewInt(30),
 			},
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><net_terms>30</net_terms></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
-				NetTerms: recurly.NewInt(0),
+				NetTerms: NewInt(0),
 			},
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><net_terms>0</net_terms></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				PONumber: "PB4532345",
@@ -177,10 +175,10 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><po_number>PB4532345</po_number></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				Bulk: true,
@@ -188,10 +186,10 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><bulk>true</bulk></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				Bulk: false,
@@ -200,10 +198,10 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				TermsAndConditions: "foo ... bar..",
@@ -211,10 +209,10 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><terms_and_conditions>foo ... bar..</terms_and_conditions></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				CustomerNotes: "foo ... customer.. bar",
@@ -222,10 +220,10 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><customer_notes>foo ... customer.. bar</customer_notes></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
 				VATReverseChargeNotes: "foo ... VAT.. bar",
@@ -233,13 +231,13 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><vat_reverse_charge_notes>foo ... VAT.. bar</vat_reverse_charge_notes></subscription>",
 		},
 		{
-			v: recurly.NewSubscription{
+			v: NewSubscription{
 				PlanCode: "gold",
 				Currency: "USD",
-				Account: recurly.Account{
+				Account: Account{
 					Code: "123",
 				},
-				BankAccountAuthorizedAt: recurly.NewTime(ts),
+				BankAccountAuthorizedAt: NewTime(ts),
 			},
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><currency>USD</currency><bank_account_authorized_at>2015-06-03T13:42:23Z</bank_account_authorized_at></subscription>",
 		},
@@ -257,42 +255,42 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 
 func TestSubscriptions_UpdateSubscription_Encoding(t *testing.T) {
 	tests := []struct {
-		v        recurly.UpdateSubscription
+		v        UpdateSubscription
 		expected string
 	}{
 		{
 			expected: "<subscription></subscription>",
 		},
 		{
-			v:        recurly.UpdateSubscription{Timeframe: "renewal"},
+			v:        UpdateSubscription{Timeframe: "renewal"},
 			expected: "<subscription><timeframe>renewal</timeframe></subscription>",
 		},
 		{
-			v:        recurly.UpdateSubscription{PlanCode: "new-code"},
+			v:        UpdateSubscription{PlanCode: "new-code"},
 			expected: "<subscription><plan_code>new-code</plan_code></subscription>",
 		},
 		{
-			v:        recurly.UpdateSubscription{Quantity: 14},
+			v:        UpdateSubscription{Quantity: 14},
 			expected: "<subscription><quantity>14</quantity></subscription>",
 		},
 		{
-			v:        recurly.UpdateSubscription{UnitAmountInCents: 3500},
+			v:        UpdateSubscription{UnitAmountInCents: 3500},
 			expected: "<subscription><unit_amount_in_cents>3500</unit_amount_in_cents></subscription>",
 		},
 		{
-			v:        recurly.UpdateSubscription{CollectionMethod: "manual"},
+			v:        UpdateSubscription{CollectionMethod: "manual"},
 			expected: "<subscription><collection_method>manual</collection_method></subscription>",
 		},
 		{
-			v:        recurly.UpdateSubscription{NetTerms: recurly.NewInt(0)},
+			v:        UpdateSubscription{NetTerms: NewInt(0)},
 			expected: "<subscription><net_terms>0</net_terms></subscription>",
 		},
 		{
-			v:        recurly.UpdateSubscription{PONumber: "AB-NewPO"},
+			v:        UpdateSubscription{PONumber: "AB-NewPO"},
 			expected: "<subscription><po_number>AB-NewPO</po_number></subscription>",
 		},
 		{
-			v: recurly.UpdateSubscription{SubscriptionAddOns: &[]recurly.SubscriptionAddOn{
+			v: UpdateSubscription{SubscriptionAddOns: &[]SubscriptionAddOn{
 				{
 					Code:              "extra_users",
 					UnitAmountInCents: 1000,
@@ -302,8 +300,8 @@ func TestSubscriptions_UpdateSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><subscription_add_ons><subscription_add_on><add_on_code>extra_users</add_on_code><unit_amount_in_cents>1000</unit_amount_in_cents><quantity>2</quantity></subscription_add_on></subscription_add_ons></subscription>",
 		},
 		{
-			v: recurly.Subscription{
-				SubscriptionAddOns: []recurly.SubscriptionAddOn{
+			v: Subscription{
+				SubscriptionAddOns: []SubscriptionAddOn{
 					{
 						Code:              "extra_users",
 						UnitAmountInCents: 1000,
@@ -311,7 +309,7 @@ func TestSubscriptions_UpdateSubscription_Encoding(t *testing.T) {
 					},
 				},
 				PONumber: "abc-123",
-				NetTerms: recurly.NewInt(23),
+				NetTerms: NewInt(23),
 			}.MakeUpdate(),
 			expected: "<subscription><net_terms>23</net_terms><subscription_add_ons><subscription_add_on><add_on_code>extra_users</add_on_code><unit_amount_in_cents>1000</unit_amount_in_cents><quantity>2</quantity></subscription_add_on></subscription_add_ons></subscription>",
 		},
@@ -377,7 +375,7 @@ func TestSubscriptions_List(t *testing.T) {
 		</subscriptions>`)
 	})
 
-	r, subscriptions, err := client.Subscriptions.List(recurly.Params{"per_page": 1})
+	r, subscriptions, err := client.Subscriptions.List(Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -386,14 +384,14 @@ func TestSubscriptions_List(t *testing.T) {
 		t.Fatalf("unexpected per_page: %s", pp)
 	}
 
-	activated, _ := time.Parse(recurly.DateTimeFormat, "2011-05-27T07:00:00Z")
-	cpStartedAt, _ := time.Parse(recurly.DateTimeFormat, "2011-06-27T07:00:00Z")
-	cpEndsAt, _ := time.Parse(recurly.DateTimeFormat, "2010-07-27T07:00:00Z")
+	activated, _ := time.Parse(DateTimeFormat, "2011-05-27T07:00:00Z")
+	cpStartedAt, _ := time.Parse(DateTimeFormat, "2011-06-27T07:00:00Z")
+	cpEndsAt, _ := time.Parse(DateTimeFormat, "2010-07-27T07:00:00Z")
 
-	if !reflect.DeepEqual(subscriptions, []recurly.Subscription{
+	if !reflect.DeepEqual(subscriptions, []Subscription{
 		{
 			XMLName: xml.Name{Local: "subscription"},
-			Plan: recurly.NestedPlan{
+			Plan: NestedPlan{
 				Code: "gold",
 				Name: "Gold plan",
 			},
@@ -404,15 +402,15 @@ func TestSubscriptions_List(t *testing.T) {
 			UnitAmountInCents:      800,
 			Currency:               "EUR",
 			Quantity:               1,
-			ActivatedAt:            recurly.NewTime(activated),
-			CurrentPeriodStartedAt: recurly.NewTime(cpStartedAt),
-			CurrentPeriodEndsAt:    recurly.NewTime(cpEndsAt),
+			ActivatedAt:            NewTime(activated),
+			CurrentPeriodStartedAt: NewTime(cpStartedAt),
+			CurrentPeriodEndsAt:    NewTime(cpEndsAt),
 			TaxInCents:             72,
 			TaxType:                "usst",
 			TaxRegion:              "CA",
 			TaxRate:                0.0875,
-			NetTerms:               recurly.NewInt(0),
-			SubscriptionAddOns: []recurly.SubscriptionAddOn{
+			NetTerms:               NewInt(0),
+			SubscriptionAddOns: []SubscriptionAddOn{
 				{
 					XMLName:           xml.Name{Local: "subscription_add_on"},
 					Type:              "fixed",
@@ -472,7 +470,7 @@ func TestSubscriptions_ListAccount(t *testing.T) {
 		</subscriptions>`)
 	})
 
-	r, subscriptions, err := client.Subscriptions.ListAccount("1", recurly.Params{"per_page": 1})
+	r, subscriptions, err := client.Subscriptions.ListAccount("1", Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -481,14 +479,14 @@ func TestSubscriptions_ListAccount(t *testing.T) {
 		t.Fatalf("unexpected per_page: %s", pp)
 	}
 
-	activated, _ := time.Parse(recurly.DateTimeFormat, "2011-05-27T07:00:00Z")
-	cpStartedAt, _ := time.Parse(recurly.DateTimeFormat, "2011-06-27T07:00:00Z")
-	cpEndsAt, _ := time.Parse(recurly.DateTimeFormat, "2010-07-27T07:00:00Z")
+	activated, _ := time.Parse(DateTimeFormat, "2011-05-27T07:00:00Z")
+	cpStartedAt, _ := time.Parse(DateTimeFormat, "2011-06-27T07:00:00Z")
+	cpEndsAt, _ := time.Parse(DateTimeFormat, "2010-07-27T07:00:00Z")
 
-	if !reflect.DeepEqual(subscriptions, []recurly.Subscription{
+	if !reflect.DeepEqual(subscriptions, []Subscription{
 		{
 			XMLName: xml.Name{Local: "subscription"},
-			Plan: recurly.NestedPlan{
+			Plan: NestedPlan{
 				Code: "gold",
 				Name: "Gold plan",
 			},
@@ -499,14 +497,14 @@ func TestSubscriptions_ListAccount(t *testing.T) {
 			UnitAmountInCents:      800,
 			Currency:               "EUR",
 			Quantity:               1,
-			ActivatedAt:            recurly.NewTime(activated),
-			CurrentPeriodStartedAt: recurly.NewTime(cpStartedAt),
-			CurrentPeriodEndsAt:    recurly.NewTime(cpEndsAt),
+			ActivatedAt:            NewTime(activated),
+			CurrentPeriodStartedAt: NewTime(cpStartedAt),
+			CurrentPeriodEndsAt:    NewTime(cpEndsAt),
 			TaxInCents:             72,
 			TaxType:                "usst",
 			TaxRegion:              "CA",
 			TaxRate:                0.0875,
-			NetTerms:               recurly.NewInt(0),
+			NetTerms:               NewInt(0),
 		},
 	}) {
 		t.Fatalf("unexpected subscriptions: %v", subscriptions)
@@ -563,9 +561,9 @@ func TestSubscriptions_Get(t *testing.T) {
 		t.Fatal("expected list subcriptions to return OK")
 	}
 
-	if !reflect.DeepEqual(subscription, &recurly.Subscription{
+	if !reflect.DeepEqual(subscription, &Subscription{
 		XMLName: xml.Name{Local: "subscription"},
-		Plan: recurly.NestedPlan{
+		Plan: NestedPlan{
 			Code: "gold",
 			Name: "Gold plan",
 		},
@@ -576,14 +574,14 @@ func TestSubscriptions_Get(t *testing.T) {
 		UnitAmountInCents:      800,
 		Currency:               "EUR",
 		Quantity:               1,
-		ActivatedAt:            recurly.NewTime(time.Date(2011, time.May, 27, 7, 0, 0, 0, time.UTC)),
-		CurrentPeriodStartedAt: recurly.NewTime(time.Date(2011, time.June, 27, 7, 0, 0, 0, time.UTC)),
-		CurrentPeriodEndsAt:    recurly.NewTime(time.Date(2011, time.July, 27, 7, 0, 0, 0, time.UTC)),
+		ActivatedAt:            NewTime(time.Date(2011, time.May, 27, 7, 0, 0, 0, time.UTC)),
+		CurrentPeriodStartedAt: NewTime(time.Date(2011, time.June, 27, 7, 0, 0, 0, time.UTC)),
+		CurrentPeriodEndsAt:    NewTime(time.Date(2011, time.July, 27, 7, 0, 0, 0, time.UTC)),
 		TaxInCents:             72,
 		TaxType:                "usst",
 		TaxRegion:              "CA",
 		TaxRate:                0.0875,
-		NetTerms:               recurly.NewInt(0),
+		NetTerms:               NewInt(0),
 	}) {
 		t.Fatalf("unexpected subscription: %v", subscription)
 	}
@@ -681,9 +679,9 @@ func TestSubscriptions_Get_PendingSubscription(t *testing.T) {
 		t.Fatal("expected list subcriptions to return OK")
 	}
 
-	if !reflect.DeepEqual(subscription, &recurly.Subscription{
+	if !reflect.DeepEqual(subscription, &Subscription{
 		XMLName: xml.Name{Local: "subscription"},
-		Plan: recurly.NestedPlan{
+		Plan: NestedPlan{
 			Code: "gold",
 			Name: "Gold plan",
 		},
@@ -694,22 +692,22 @@ func TestSubscriptions_Get_PendingSubscription(t *testing.T) {
 		UnitAmountInCents:      800,
 		Currency:               "EUR",
 		Quantity:               1,
-		ActivatedAt:            recurly.NewTime(time.Date(2011, time.May, 27, 7, 0, 0, 0, time.UTC)),
-		CurrentPeriodStartedAt: recurly.NewTime(time.Date(2011, time.June, 27, 7, 0, 0, 0, time.UTC)),
-		CurrentPeriodEndsAt:    recurly.NewTime(time.Date(2011, time.July, 27, 7, 0, 0, 0, time.UTC)),
+		ActivatedAt:            NewTime(time.Date(2011, time.May, 27, 7, 0, 0, 0, time.UTC)),
+		CurrentPeriodStartedAt: NewTime(time.Date(2011, time.June, 27, 7, 0, 0, 0, time.UTC)),
+		CurrentPeriodEndsAt:    NewTime(time.Date(2011, time.July, 27, 7, 0, 0, 0, time.UTC)),
 		TaxInCents:             72,
 		TaxType:                "usst",
 		TaxRegion:              "CA",
 		TaxRate:                0.0875,
-		NetTerms:               recurly.NewInt(0),
-		PendingSubscription: &recurly.PendingSubscription{
+		NetTerms:               NewInt(0),
+		PendingSubscription: &PendingSubscription{
 			XMLName: xml.Name{Local: "pending_subscription"},
-			Plan: recurly.NestedPlan{
+			Plan: NestedPlan{
 				Code: "gold",
 				Name: "Gold plan",
 			},
 			Quantity: 1,
-			SubscriptionAddOns: []recurly.SubscriptionAddOn{
+			SubscriptionAddOns: []SubscriptionAddOn{
 				{
 					XMLName:           xml.Name{Local: "subscription_add_on"},
 					Type:              "fixed",
@@ -743,7 +741,7 @@ func TestSubscriptions_Create(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><subscription></subscription>`)
 	})
 
-	r, _, err := client.Subscriptions.Create(recurly.NewSubscription{})
+	r, _, err := client.Subscriptions.Create(NewSubscription{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -792,14 +790,14 @@ func TestSubscriptions_Create_TransactionError(t *testing.T) {
 			</errors>`)
 	})
 
-	r, newSubscription, err := client.Subscriptions.Create(recurly.NewSubscription{})
+	r, newSubscription, err := client.Subscriptions.Create(NewSubscription{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if !r.IsError() {
 		t.Fatal("expected create subscription to return OK")
 	} else if newSubscription.Transaction == nil {
 		t.Fatal("expected transaction to be set")
-	} else if !reflect.DeepEqual(newSubscription.Transaction, &recurly.Transaction{
+	} else if !reflect.DeepEqual(newSubscription.Transaction, &Transaction{
 		UUID:             "3c42a3ecc46a7aa602602e4033b9c2e6",
 		SubscriptionUUID: "3c42a3ebabdc022739d5a646408291a6",
 		Action:           "purchase",
@@ -807,7 +805,7 @@ func TestSubscriptions_Create_TransactionError(t *testing.T) {
 		Currency:         "USD",
 		Status:           "declined",
 		PaymentMethod:    "credit_card",
-		TransactionError: &recurly.TransactionError{
+		TransactionError: &TransactionError{
 			XMLName:         xml.Name{Local: "transaction_error"},
 			ErrorCode:       "declined_saveable",
 			ErrorCategory:   "soft",
@@ -833,7 +831,7 @@ func TestSubscriptions_Preview(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><subscription></subscription>`)
 	})
 
-	r, _, err := client.Subscriptions.Preview(recurly.NewSubscription{})
+	r, _, err := client.Subscriptions.Preview(NewSubscription{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -853,7 +851,7 @@ func TestSubscriptions_Update(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><subscription></subscription>`)
 	})
 
-	r, _, err := client.Subscriptions.Update("44f83d7cba-354d5b84812419-f923ea96", recurly.UpdateSubscription{}) // UUID has dashes and should be sanitized
+	r, _, err := client.Subscriptions.Update("44f83d7cba-354d5b84812419-f923ea96", UpdateSubscription{}) // UUID has dashes and should be sanitized
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -873,7 +871,7 @@ func TestSubscriptions_Notes(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><subscription></subscription>`)
 	})
 
-	r, _, err := client.Subscriptions.UpdateNotes("44f83d7cba354d5-b8481241-9f923ea96", recurly.SubscriptionNotes{}) // UUID has dashes and should be sanitized
+	r, _, err := client.Subscriptions.UpdateNotes("44f83d7cba354d5-b8481241-9f923ea96", SubscriptionNotes{}) // UUID has dashes and should be sanitized
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -893,7 +891,7 @@ func TestSubscriptions_Change(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><subscription></subscription>`)
 	})
 
-	r, _, err := client.Subscriptions.PreviewChange("44f83d7cba-354d5b84812-419f923ea96", recurly.UpdateSubscription{}) // UUID has dashes and should be sanitized
+	r, _, err := client.Subscriptions.PreviewChange("44f83d7cba-354d5b84812-419f923ea96", UpdateSubscription{}) // UUID has dashes and should be sanitized
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -1011,7 +1009,7 @@ func TestSubscriptions_Postpone(t *testing.T) {
 	setup()
 	defer teardown()
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2015-08-27T07:00:00Z")
+	ts, _ := time.Parse(DateTimeFormat, "2015-08-27T07:00:00Z")
 	mux.HandleFunc("/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/postpone", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "PUT" {
 			t.Fatalf("unexpected method: %s", r.Method)

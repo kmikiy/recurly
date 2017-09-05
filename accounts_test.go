@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/blacklightcms/recurly"
+	"github.com/kmikiy/recurly"
 )
 
 // TestAccountEncoding ensures structs are encoded to XML properly.
@@ -21,28 +21,28 @@ func TestAccounts_Encoding(t *testing.T) {
 		v        interface{}
 		expected string
 	}{
-		{v: recurly.Account{}, expected: "<account></account>"},
-		{v: recurly.Account{Code: "abc"}, expected: "<account><account_code>abc</account_code></account>"},
-		{v: recurly.Account{State: "active"}, expected: "<account><state>active</state></account>"},
-		{v: recurly.Account{Email: "me@example.com"}, expected: "<account><email>me@example.com</email></account>"},
-		{v: recurly.Account{FirstName: "Larry"}, expected: "<account><first_name>Larry</first_name></account>"},
-		{v: recurly.Account{LastName: "Larrison"}, expected: "<account><last_name>Larrison</last_name></account>"},
-		{v: recurly.Account{FirstName: "Larry", LastName: "Larrison"}, expected: "<account><first_name>Larry</first_name><last_name>Larrison</last_name></account>"},
-		{v: recurly.Account{CompanyName: "Acme, Inc"}, expected: "<account><company_name>Acme, Inc</company_name></account>"},
-		{v: recurly.Account{VATNumber: "123456789"}, expected: "<account><vat_number>123456789</vat_number></account>"},
-		{v: recurly.Account{TaxExempt: recurly.NewBool(true)}, expected: "<account><tax_exempt>true</tax_exempt></account>"},
-		{v: recurly.Account{TaxExempt: recurly.NewBool(false)}, expected: "<account><tax_exempt>false</tax_exempt></account>"},
-		{v: recurly.Account{AcceptLanguage: "en_US"}, expected: "<account><accept_language>en_US</accept_language></account>"},
-		{v: recurly.Account{FirstName: "Larry", Address: recurly.Address{Address: "123 Main St.", City: "San Francisco", State: "CA", Zip: "94105", Country: "US"}}, expected: "<account><first_name>Larry</first_name><address><address1>123 Main St.</address1><city>San Francisco</city><state>CA</state><zip>94105</zip><country>US</country></address></account>"},
-		{v: recurly.Account{Code: "test@example.com", BillingInfo: &recurly.Billing{Token: "507c7f79bcf86cd7994f6c0e"}}, expected: "<account><account_code>test@example.com</account_code><billing_info><token_id>507c7f79bcf86cd7994f6c0e</token_id></billing_info></account>"},
-		{v: recurly.Address{}, expected: ""},
-		{v: recurly.Address{Address: "123 Main St."}, expected: "<address><address1>123 Main St.</address1></address>"},
-		{v: recurly.Address{Address2: "Unit A"}, expected: "<address><address2>Unit A</address2></address>"},
-		{v: recurly.Address{City: "San Francisco"}, expected: "<address><city>San Francisco</city></address>"},
-		{v: recurly.Address{State: "CA"}, expected: "<address><state>CA</state></address>"},
-		{v: recurly.Address{Zip: "94105"}, expected: "<address><zip>94105</zip></address>"},
-		{v: recurly.Address{Country: "US"}, expected: "<address><country>US</country></address>"},
-		{v: recurly.Address{Phone: "555-555-5555"}, expected: "<address><phone>555-555-5555</phone></address>"},
+		{v: Account{}, expected: "<account></account>"},
+		{v: Account{Code: "abc"}, expected: "<account><account_code>abc</account_code></account>"},
+		{v: Account{State: "active"}, expected: "<account><state>active</state></account>"},
+		{v: Account{Email: "me@example.com"}, expected: "<account><email>me@example.com</email></account>"},
+		{v: Account{FirstName: "Larry"}, expected: "<account><first_name>Larry</first_name></account>"},
+		{v: Account{LastName: "Larrison"}, expected: "<account><last_name>Larrison</last_name></account>"},
+		{v: Account{FirstName: "Larry", LastName: "Larrison"}, expected: "<account><first_name>Larry</first_name><last_name>Larrison</last_name></account>"},
+		{v: Account{CompanyName: "Acme, Inc"}, expected: "<account><company_name>Acme, Inc</company_name></account>"},
+		{v: Account{VATNumber: "123456789"}, expected: "<account><vat_number>123456789</vat_number></account>"},
+		{v: Account{TaxExempt: NewBool(true)}, expected: "<account><tax_exempt>true</tax_exempt></account>"},
+		{v: Account{TaxExempt: NewBool(false)}, expected: "<account><tax_exempt>false</tax_exempt></account>"},
+		{v: Account{AcceptLanguage: "en_US"}, expected: "<account><accept_language>en_US</accept_language></account>"},
+		{v: Account{FirstName: "Larry", Address: Address{Address: "123 Main St.", City: "San Francisco", State: "CA", Zip: "94105", Country: "US"}}, expected: "<account><first_name>Larry</first_name><address><address1>123 Main St.</address1><city>San Francisco</city><state>CA</state><zip>94105</zip><country>US</country></address></account>"},
+		{v: Account{Code: "test@example.com", BillingInfo: &Billing{Token: "507c7f79bcf86cd7994f6c0e"}}, expected: "<account><account_code>test@example.com</account_code><billing_info><token_id>507c7f79bcf86cd7994f6c0e</token_id></billing_info></account>"},
+		{v: Address{}, expected: ""},
+		{v: Address{Address: "123 Main St."}, expected: "<address><address1>123 Main St.</address1></address>"},
+		{v: Address{Address2: "Unit A"}, expected: "<address><address2>Unit A</address2></address>"},
+		{v: Address{City: "San Francisco"}, expected: "<address><city>San Francisco</city></address>"},
+		{v: Address{State: "CA"}, expected: "<address><state>CA</state></address>"},
+		{v: Address{Zip: "94105"}, expected: "<address><zip>94105</zip></address>"},
+		{v: Address{Country: "US"}, expected: "<address><country>US</country></address>"},
+		{v: Address{Phone: "555-555-5555"}, expected: "<address><phone>555-555-5555</phone></address>"},
 	}
 
 	for i, tt := range tests {
@@ -110,16 +110,16 @@ func TestAccounts_List(t *testing.T) {
 		t.Fatalf("unexpected cursor: %s", resp.Next())
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-10-25T12:00:00Z")
-	if !reflect.DeepEqual(accounts, []recurly.Account{recurly.Account{
+	ts, _ := time.Parse(DateTimeFormat, "2011-10-25T12:00:00Z")
+	if !reflect.DeepEqual(accounts, []Account{Account{
 		XMLName:   xml.Name{Local: "account"},
 		Code:      "1",
 		State:     "active",
 		Email:     "verena@example.com",
 		FirstName: "Verena",
 		LastName:  "Example",
-		TaxExempt: recurly.NewBool(false),
-		Address: recurly.Address{
+		TaxExempt: NewBool(false),
+		Address: Address{
 			Address: "123 Main St.",
 			City:    "San Francisco",
 			State:   "CA",
@@ -127,7 +127,7 @@ func TestAccounts_List(t *testing.T) {
 			Country: "US",
 		},
 		HostedLoginToken: "a92468579e9c4231a6c0031c4716c01d",
-		CreatedAt:        recurly.NewTime(ts),
+		CreatedAt:        NewTime(ts),
 	}}) {
 		t.Fatalf("unexpected account: %v", accounts)
 	}
@@ -148,7 +148,7 @@ func TestAccounts_List_Pagination(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><accounts></accounts>`)
 	})
 
-	resp, _, err := client.Accounts.List(recurly.Params{"cursor": "12345"})
+	resp, _, err := client.Accounts.List(Params{"cursor": "12345"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
@@ -216,16 +216,16 @@ func TestAccounts_Get(t *testing.T) {
 	}
 
 	tsCreated, _ := time.Parse(recurly.DateTimeFormat, "2011-10-25T12:00:00Z")
-	tsUpdated, _ := time.Parse(recurly.DateTimeFormat, "2016-07-11T17:56:24Z")
-	if !reflect.DeepEqual(a, &recurly.Account{
+	tsUpdated, _ := time.Parse(DateTimeFormat, "2016-07-11T17:56:24Z")
+	if !reflect.DeepEqual(a, &Account{
 		XMLName:   xml.Name{Local: "account"},
 		Code:      "1",
 		State:     "active",
 		Email:     "verena@example.com",
 		FirstName: "Verena",
 		LastName:  "Example",
-		TaxExempt: recurly.NewBool(false),
-		Address: recurly.Address{
+		TaxExempt: NewBool(false),
+		Address: Address{
 			Address: "123 Main St.",
 			City:    "San Francisco",
 			State:   "CA",
@@ -233,13 +233,13 @@ func TestAccounts_Get(t *testing.T) {
 			Country: "US",
 		},
 		HostedLoginToken:        "a92468579e9c4231a6c0031c4716c01d",
-		CreatedAt:               recurly.NewTime(tsCreated),
-		UpdatedAt:               recurly.NewTime(tsUpdated),
-		HasLiveSubscription:     recurly.NewBool(true),
-		HasActiveSubscription:   recurly.NewBool(true),
-		HasFutureSubscription:   recurly.NewBool(false),
-		HasCanceledSubscription: recurly.NewBool(false),
-		HasPastDueInvoice:       recurly.NewBool(false),
+		CreatedAt:               NewTime(tsCreated),
+		UpdatedAt:               NewTime(tsUpdated),
+		HasLiveSubscription:     NewBool(true),
+		HasActiveSubscription:   NewBool(true),
+		HasFutureSubscription:   NewBool(false),
+		HasCanceledSubscription: NewBool(false),
+		HasPastDueInvoice:       NewBool(false),
 	}) {
 		t.Fatalf("unexpected value: %v", a)
 	}
@@ -292,13 +292,13 @@ func TestAccounts_LookupAccountBalance(t *testing.T) {
 		t.Fatal("expected get account balance to return OK")
 	}
 
-	if !reflect.DeepEqual(b, &recurly.AccountBalance{
+	if !reflect.DeepEqual(b, &AccountBalance{
 		XMLName:     xml.Name{Local: "account_balance"},
 		AccountCode: "1",
 		PastDue:     false,
 		Balance:     3000,
 	}) {
-		t.Fatalf("unexpected value: \n%+v \n%+v", b, &recurly.AccountBalance{
+		t.Fatalf("unexpected value: \n%+v \n%+v", b, &AccountBalance{
 			XMLName:     xml.Name{Local: "account_balance"},
 			AccountCode: "1",
 			PastDue:     false,
@@ -319,7 +319,7 @@ func TestAccounts_Create(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><account></account>`)
 	})
 
-	resp, _, err := client.Accounts.Create(recurly.Account{})
+	resp, _, err := client.Accounts.Create(Account{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
@@ -339,7 +339,7 @@ func TestAccounts_Update(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><account></account>`)
 	})
 
-	resp, _, err := client.Accounts.Update("245", recurly.Account{})
+	resp, _, err := client.Accounts.Update("245", Account{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
@@ -414,7 +414,7 @@ func TestAccounts_ListNotes(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
 		t.Fatal("expected list notes to return OK")
-	} else if !reflect.DeepEqual(notes, []recurly.Note{
+	} else if !reflect.DeepEqual(notes, []Note{
 		{
 			XMLName:   xml.Name{Local: "note"},
 			Message:   "This is my second note",

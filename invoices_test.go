@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -10,8 +10,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/blacklightcms/recurly"
 )
 
 func TestInvoices_List(t *testing.T) {
@@ -88,17 +86,17 @@ func TestInvoices_List(t *testing.T) {
         </invoices>`)
 	})
 
-	resp, invoices, err := client.Invoices.List(recurly.Params{"per_page": 1})
+	resp, invoices, err := client.Invoices.List(Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
 		t.Fatal("expected list invoices to return OK")
 	} else if resp.Request.URL.Query().Get("per_page") != "1" {
 		t.Fatalf("expected per_page parameter of 1, given %s", resp.Request.URL.Query().Get("per_page"))
-	} else if !reflect.DeepEqual(invoices, []recurly.Invoice{{
+	} else if !reflect.DeepEqual(invoices, []Invoice{{
 		XMLName:     xml.Name{Local: "invoice"},
 		AccountCode: "1",
-		Address: recurly.Address{
+		Address: Address{
 			Address: "400 Alabama St.",
 			City:    "San Francisco",
 			State:   "CA",
@@ -108,19 +106,19 @@ func TestInvoices_List(t *testing.T) {
 		SubscriptionUUID:      "17caaca1716f33572edc8146e0aaefde",
 		OriginalInvoiceNumber: 938571,
 		UUID:             "421f7b7d414e4c6792938e7c49d552e9",
-		State:            recurly.InvoiceStateOpen,
+		State:            InvoiceStateOpen,
 		InvoiceNumber:    1005,
 		SubtotalInCents:  1200,
 		TaxInCents:       0,
 		TotalInCents:     1200,
 		Currency:         "USD",
-		CreatedAt:        recurly.NewTimeFromString("2011-08-25T12:00:00Z"),
+		CreatedAt:        NewTimeFromString("2011-08-25T12:00:00Z"),
 		TaxType:          "usst",
 		TaxRegion:        "CA",
 		TaxRate:          float64(0),
-		NetTerms:         recurly.NewInt(0),
+		NetTerms:         NewInt(0),
 		CollectionMethod: "automatic",
-		LineItems: []recurly.Adjustment{
+		LineItems: []Adjustment{
 			{
 				AccountCode:            "100",
 				InvoiceNumber:          1108,
@@ -135,10 +133,10 @@ func TestInvoices_List(t *testing.T) {
 				TaxInCents:             180,
 				TotalInCents:           2180,
 				Currency:               "USD",
-				Taxable:                recurly.NewBool(false),
-				TaxExempt:              recurly.NewBool(false),
-				StartDate:              recurly.NewTimeFromString("2011-08-31T03:30:00Z"),
-				CreatedAt:              recurly.NewTimeFromString("2011-08-31T03:30:00Z"),
+				Taxable:                NewBool(false),
+				TaxExempt:              NewBool(false),
+				StartDate:              NewTimeFromString("2011-08-31T03:30:00Z"),
+				CreatedAt:              NewTimeFromString("2011-08-31T03:30:00Z"),
 			},
 		},
 	}}) {
@@ -219,18 +217,18 @@ func TestInvoices_ListAccount(t *testing.T) {
         </invoices>`)
 	})
 
-	resp, invoices, err := client.Invoices.ListAccount("1", recurly.Params{"per_page": 1})
+	resp, invoices, err := client.Invoices.ListAccount("1", Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
 		t.Fatal("expected list invoices to return OK")
 	} else if pp := resp.Request.URL.Query().Get("per_page"); pp != "1" {
 		t.Fatalf("unexpected per_page: %s", pp)
-	} else if !reflect.DeepEqual(invoices, []recurly.Invoice{
+	} else if !reflect.DeepEqual(invoices, []Invoice{
 		{
 			XMLName:     xml.Name{Local: "invoice"},
 			AccountCode: "1",
-			Address: recurly.Address{
+			Address: Address{
 				Address: "400 Alabama St.",
 				City:    "San Francisco",
 				State:   "CA",
@@ -239,19 +237,19 @@ func TestInvoices_ListAccount(t *testing.T) {
 			},
 			SubscriptionUUID: "17caaca1716f33572edc8146e0aaefde",
 			UUID:             "421f7b7d414e4c6792938e7c49d552e9",
-			State:            recurly.InvoiceStateOpen,
+			State:            InvoiceStateOpen,
 			InvoiceNumber:    1005,
 			SubtotalInCents:  1200,
 			TaxInCents:       0,
 			TotalInCents:     1200,
 			Currency:         "USD",
-			CreatedAt:        recurly.NewTimeFromString("2011-08-25T12:00:00Z"),
+			CreatedAt:        NewTimeFromString("2011-08-25T12:00:00Z"),
 			TaxType:          "usst",
 			TaxRegion:        "CA",
 			TaxRate:          float64(0),
-			NetTerms:         recurly.NewInt(0),
+			NetTerms:         NewInt(0),
 			CollectionMethod: "automatic",
-			LineItems: []recurly.Adjustment{
+			LineItems: []Adjustment{
 				{
 					AccountCode:            "100",
 					InvoiceNumber:          1108,
@@ -266,10 +264,10 @@ func TestInvoices_ListAccount(t *testing.T) {
 					TaxInCents:             180,
 					TotalInCents:           2180,
 					Currency:               "USD",
-					Taxable:                recurly.NewBool(false),
-					TaxExempt:              recurly.NewBool(false),
-					StartDate:              recurly.NewTimeFromString("2011-08-31T03:30:00Z"),
-					CreatedAt:              recurly.NewTimeFromString("2011-08-31T03:30:00Z"),
+					Taxable:                NewBool(false),
+					TaxExempt:              NewBool(false),
+					StartDate:              NewTimeFromString("2011-08-31T03:30:00Z"),
+					CreatedAt:              NewTimeFromString("2011-08-31T03:30:00Z"),
 				},
 			},
 		},
@@ -414,11 +412,11 @@ func TestInvoices_Get(t *testing.T) {
 		t.Fatal("expected get invoice to return OK")
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-08-25T12:00:00Z")
-	if !reflect.DeepEqual(invoice, &recurly.Invoice{
+	ts, _ := time.Parse(DateTimeFormat, "2011-08-25T12:00:00Z")
+	if !reflect.DeepEqual(invoice, &Invoice{
 		XMLName:     xml.Name{Local: "invoice"},
 		AccountCode: "1",
-		Address: recurly.Address{
+		Address: Address{
 			Address: "400 Alabama St.",
 			City:    "San Francisco",
 			State:   "CA",
@@ -427,19 +425,19 @@ func TestInvoices_Get(t *testing.T) {
 		},
 		SubscriptionUUID: "17caaca1716f33572edc8146e0aaefde",
 		UUID:             "421f7b7d414e4c6792938e7c49d552e9",
-		State:            recurly.InvoiceStateOpen,
+		State:            InvoiceStateOpen,
 		InvoiceNumber:    1005,
 		SubtotalInCents:  1200,
 		TaxInCents:       0,
 		TotalInCents:     1200,
 		Currency:         "USD",
-		CreatedAt:        recurly.NewTime(ts),
+		CreatedAt:        NewTime(ts),
 		TaxType:          "usst",
 		TaxRegion:        "CA",
 		TaxRate:          float64(0),
-		NetTerms:         recurly.NewInt(0),
+		NetTerms:         NewInt(0),
 		CollectionMethod: "automatic",
-		LineItems: []recurly.Adjustment{
+		LineItems: []Adjustment{
 			{
 				AccountCode:            "100",
 				InvoiceNumber:          1108,
@@ -454,13 +452,13 @@ func TestInvoices_Get(t *testing.T) {
 				TaxInCents:             180,
 				TotalInCents:           2180,
 				Currency:               "USD",
-				Taxable:                recurly.NewBool(false),
-				TaxExempt:              recurly.NewBool(false),
-				StartDate:              recurly.NewTimeFromString("2011-08-31T03:30:00Z"),
-				CreatedAt:              recurly.NewTimeFromString("2011-08-31T03:30:00Z"),
+				Taxable:                NewBool(false),
+				TaxExempt:              NewBool(false),
+				StartDate:              NewTimeFromString("2011-08-31T03:30:00Z"),
+				CreatedAt:              NewTimeFromString("2011-08-31T03:30:00Z"),
 			},
 		},
-		Transactions: []recurly.Transaction{
+		Transactions: []Transaction{
 			{
 				InvoiceNumber:    1108,
 				SubscriptionUUID: "17caaca1716f33572edc8146e0aaefde",
@@ -473,12 +471,12 @@ func TestInvoices_Get(t *testing.T) {
 				PaymentMethod:    "credit_card",
 				Reference:        "5416477",
 				Source:           "subscription",
-				Recurring:        recurly.NewBool(true),
+				Recurring:        NewBool(true),
 				Test:             true,
-				Voidable:         recurly.NewBool(true),
-				Refundable:       recurly.NewBool(true),
+				Voidable:         NewBool(true),
+				Refundable:       NewBool(true),
 				IPAddress:        net.ParseIP("127.0.0.1"),
-				TransactionError: &recurly.TransactionError{
+				TransactionError: &TransactionError{
 					XMLName:          xml.Name{Local: "transaction_error"},
 					ErrorCode:        "declined",
 					ErrorCategory:    "soft",
@@ -486,26 +484,26 @@ func TestInvoices_Get(t *testing.T) {
 					CustomerMessage:  "Your transaction was declined. Please use a different card or contact your bank.",
 					GatewayErrorCode: "2",
 				},
-				CVVResult: recurly.CVVResult{
-					recurly.TransactionResult{
+				CVVResult: CVVResult{
+					TransactionResult{
 						Code:    "M",
 						Message: "Match",
 					},
 				},
-				AVSResult: recurly.AVSResult{
-					recurly.TransactionResult{
+				AVSResult: AVSResult{
+					TransactionResult{
 						Code:    "D",
 						Message: "Street address and postal code match.",
 					},
 				},
-				CreatedAt: recurly.NewTimeFromString("2015-06-10T15:25:06Z"),
-				Account: recurly.Account{
+				CreatedAt: NewTimeFromString("2015-06-10T15:25:06Z"),
+				Account: Account{
 					XMLName:   xml.Name{Local: "account"},
 					Code:      "1",
 					FirstName: "Verena",
 					LastName:  "Example",
 					Email:     "verena@test.com",
-					BillingInfo: &recurly.Billing{
+					BillingInfo: &Billing{
 						XMLName:   xml.Name{Local: "billing_info"},
 						FirstName: "Verena",
 						LastName:  "Example",
@@ -692,7 +690,7 @@ func TestInvoices_Create(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><invoice></invoice>`)
 	})
 
-	resp, _, err := client.Invoices.Create("10", recurly.Invoice{})
+	resp, _, err := client.Invoices.Create("10", Invoice{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
@@ -719,9 +717,9 @@ func TestInvoices_Create_Params(t *testing.T) {
 
 	// Fields ordered in same order as struct xml tags, XML above in same order
 	// for equality check.
-	resp, _, err := client.Invoices.Create("10", recurly.Invoice{
+	resp, _, err := client.Invoices.Create("10", Invoice{
 		PONumber:              "ABC",
-		NetTerms:              recurly.NewInt(30),
+		NetTerms:              NewInt(30),
 		CollectionMethod:      "COLLECTION_METHOD",
 		TermsAndConditions:    "TERMS",
 		CustomerNotes:         "CUSTOMER_NOTES",
@@ -885,9 +883,9 @@ func TestInvoices_RecordPayment(t *testing.T) {
 	})
 
 	date := time.Date(2017, 1, 3, 0, 0, 0, 0, time.UTC)
-	resp, _, err := client.Invoices.RecordPayment(recurly.OfflinePayment{
+	resp, _, err := client.Invoices.RecordPayment(OfflinePayment{
 		InvoiceNumber: 1402,
-		PaymentMethod: recurly.PaymentMethodCheck,
+		PaymentMethod: PaymentMethodCheck,
 		Amount:        1000,
 		CollectedAt:   &date,
 		Description:   "Paid with a check",

@@ -1,10 +1,8 @@
-package recurly_test
+package recurly
 
 import (
 	"net/http"
 	"net/http/httptest"
-
-	"github.com/blacklightcms/recurly"
 )
 
 var (
@@ -15,7 +13,7 @@ var (
 	server *httptest.Server
 
 	// client is the Recurly client being tested
-	client *recurly.Client
+	client *Client
 )
 
 // setup sets up a test HTTP server along with a recurly.Client that is
@@ -26,7 +24,7 @@ func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
 
-	client = recurly.NewClient("test", "abc", nil)
+	client = NewClient("test", "abc", nil)
 	client.BaseURL = server.URL + "/"
 }
 

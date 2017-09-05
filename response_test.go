@@ -1,15 +1,13 @@
-package recurly_test
+package recurly
 
 import (
 	"net/http"
 	"testing"
-
-	"github.com/blacklightcms/recurly"
 )
 
 func TestResponse_ConvenienceMethods(t *testing.T) {
 	// Success response.
-	resp0 := &recurly.Response{
+	resp0 := &Response{
 		Response: &http.Response{
 			StatusCode: http.StatusOK,
 		},
@@ -25,7 +23,7 @@ func TestResponse_ConvenienceMethods(t *testing.T) {
 	}
 
 	// Client error.
-	resp1 := &recurly.Response{
+	resp1 := &Response{
 		Response: &http.Response{
 			StatusCode: http.StatusForbidden,
 		},
@@ -41,7 +39,7 @@ func TestResponse_ConvenienceMethods(t *testing.T) {
 	}
 
 	// Server error.
-	resp2 := &recurly.Response{
+	resp2 := &Response{
 		Response: &http.Response{
 			StatusCode: http.StatusInternalServerError,
 		},
@@ -58,7 +56,7 @@ func TestResponse_ConvenienceMethods(t *testing.T) {
 }
 
 func TestResponse_CursorLinkParsing(t *testing.T) {
-	resp0 := &recurly.Response{
+	resp0 := &Response{
 		Response: &http.Response{
 			StatusCode: http.StatusOK, // Prev/Next methods require resp.IsOK() == true
 			Header: http.Header{
@@ -72,7 +70,7 @@ func TestResponse_CursorLinkParsing(t *testing.T) {
 		t.Fatalf("unexpected next: %s", resp0.Next())
 	}
 
-	resp1 := &recurly.Response{
+	resp1 := &Response{
 		Response: &http.Response{
 			StatusCode: http.StatusOK, // Prev/Next methods require resp.IsOK() == true
 			Header: http.Header{
@@ -86,7 +84,7 @@ func TestResponse_CursorLinkParsing(t *testing.T) {
 		t.Fatalf("unexpected next: %s", resp1.Next())
 	}
 
-	resp2 := &recurly.Response{
+	resp2 := &Response{
 		Response: &http.Response{
 			StatusCode: http.StatusOK, // Prev/Next methods require resp.IsOK() == true
 			Header: http.Header{

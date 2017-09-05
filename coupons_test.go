@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -9,8 +9,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/blacklightcms/recurly"
 )
 
 // TestCouponsEncoding ensures structs are encoded to XML properly.
@@ -18,17 +16,17 @@ import (
 // fields are handled properly -- including types like booleans and integers which
 // have zero values that we want to send.
 func TestCoupons_Encoding(t *testing.T) {
-	redeem, _ := time.Parse(recurly.DateTimeFormat, "2014-01-01T07:00:00Z")
+	redeem, _ := time.Parse(DateTimeFormat, "2014-01-01T07:00:00Z")
 	tests := []struct {
-		v        recurly.Coupon
+		v        Coupon
 		expected string
 	}{
 		{
-			v:        recurly.Coupon{},
+			v:        Coupon{},
 			expected: "<coupon><coupon_code></coupon_code><name></name><discount_type></discount_type></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:         "special",
 				Name:         "Special 10% off",
 				DiscountType: "percent",
@@ -36,7 +34,7 @@ func TestCoupons_Encoding(t *testing.T) {
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:              "special",
 				Name:              "Special 10% off",
 				HostedDescription: "Save 10%",
@@ -45,7 +43,7 @@ func TestCoupons_Encoding(t *testing.T) {
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><hosted_description>Save 10%</hosted_description><discount_type>percent</discount_type></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:               "special",
 				Name:               "Special 10% off",
 				InvoiceDescription: "Coupon: Special 10% off",
@@ -54,52 +52,52 @@ func TestCoupons_Encoding(t *testing.T) {
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><invoice_description>Coupon: Special 10% off</invoice_description><discount_type>percent</discount_type></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:         "special",
 				Name:         "Special 10% off",
 				DiscountType: "percent",
-				RedeemByDate: recurly.NewTime(redeem),
+				RedeemByDate: NewTime(redeem),
 			},
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><redeem_by_date>2014-01-01T07:00:00Z</redeem_by_date></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:         "special",
 				Name:         "Special 10% off",
 				DiscountType: "percent",
-				SingleUse:    recurly.NewBool(true),
+				SingleUse:    NewBool(true),
 			},
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><single_use>true</single_use></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:             "special",
 				Name:             "Special 10% off",
 				DiscountType:     "percent",
-				AppliesForMonths: recurly.NewInt(3),
+				AppliesForMonths: NewInt(3),
 			},
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><applies_for_months>3</applies_for_months></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:           "special",
 				Name:           "Special 10% off",
 				DiscountType:   "percent",
-				MaxRedemptions: recurly.NewInt(20),
+				MaxRedemptions: NewInt(20),
 			},
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><max_redemptions>20</max_redemptions></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:              "special",
 				Name:              "Special 10% off",
 				DiscountType:      "percent",
-				AppliesToAllPlans: recurly.NewBool(false),
+				AppliesToAllPlans: NewBool(false),
 			},
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><applies_to_all_plans>false</applies_to_all_plans></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:            "special",
 				Name:            "Special 10% off",
 				DiscountType:    "percent",
@@ -108,7 +106,7 @@ func TestCoupons_Encoding(t *testing.T) {
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><discount_percent>10</discount_percent></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:            "special",
 				Name:            "Special $10 off",
 				DiscountType:    "dollars",
@@ -117,12 +115,12 @@ func TestCoupons_Encoding(t *testing.T) {
 			expected: "<coupon><coupon_code>special</coupon_code><name>Special $10 off</name><discount_type>dollars</discount_type><discount_percent>1000</discount_percent></coupon>",
 		},
 		{
-			v: recurly.Coupon{
+			v: Coupon{
 				Code:              "special",
 				Name:              "Special 10% off",
 				DiscountType:      "percent",
-				AppliesToAllPlans: recurly.NewBool(false),
-				PlanCodes: &[]recurly.CouponPlanCode{
+				AppliesToAllPlans: NewBool(false),
+				PlanCodes: &[]CouponPlanCode{
 					{Code: "gold"},
 					{Code: "silver"},
 				},
@@ -174,7 +172,7 @@ func TestCoupons_List(t *testing.T) {
         </coupons>`)
 	})
 
-	resp, coupons, err := client.Coupons.List(recurly.Params{"per_page": 1})
+	resp, coupons, err := client.Coupons.List(Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
@@ -183,9 +181,9 @@ func TestCoupons_List(t *testing.T) {
 		t.Fatalf("unexpected per_page: %s", pp)
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-04-10T07:00:00Z")
-	redeem, _ := time.Parse(recurly.DateTimeFormat, "2014-01-01T07:00:00Z")
-	if !reflect.DeepEqual(coupons, []recurly.Coupon{
+	ts, _ := time.Parse(DateTimeFormat, "2011-04-10T07:00:00Z")
+	redeem, _ := time.Parse(DateTimeFormat, "2014-01-01T07:00:00Z")
+	if !reflect.DeepEqual(coupons, []Coupon{
 		{
 			XMLName:           xml.Name{Local: "coupon"},
 			Code:              "special",
@@ -193,12 +191,12 @@ func TestCoupons_List(t *testing.T) {
 			State:             "redeemable",
 			DiscountType:      "percent",
 			DiscountPercent:   10,
-			RedeemByDate:      recurly.NewTime(redeem),
-			SingleUse:         recurly.NewBool(true),
-			MaxRedemptions:    recurly.NewInt(10),
-			AppliesToAllPlans: recurly.NewBool(false),
-			CreatedAt:         recurly.NewTime(ts),
-			PlanCodes: &[]recurly.CouponPlanCode{
+			RedeemByDate:      NewTime(redeem),
+			SingleUse:         NewBool(true),
+			MaxRedemptions:    NewInt(10),
+			AppliesToAllPlans: NewBool(false),
+			CreatedAt:         NewTime(ts),
+			PlanCodes: &[]CouponPlanCode{
 				{Code: "gold"},
 				{Code: "platinum"},
 			},
@@ -246,21 +244,21 @@ func TestCoupons_Get(t *testing.T) {
 		t.Fatal("expected get coupon to return OK")
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-04-10T07:00:00Z")
-	redeem, _ := time.Parse(recurly.DateTimeFormat, "2014-01-01T07:00:00Z")
-	if !reflect.DeepEqual(coupon, &recurly.Coupon{
+	ts, _ := time.Parse(DateTimeFormat, "2011-04-10T07:00:00Z")
+	redeem, _ := time.Parse(DateTimeFormat, "2014-01-01T07:00:00Z")
+	if !reflect.DeepEqual(coupon, &Coupon{
 		XMLName:           xml.Name{Local: "coupon"},
 		Code:              "special",
 		Name:              "Special 10% off",
 		State:             "redeemable",
 		DiscountType:      "percent",
 		DiscountPercent:   10,
-		RedeemByDate:      recurly.NewTime(redeem),
-		SingleUse:         recurly.NewBool(true),
-		MaxRedemptions:    recurly.NewInt(10),
-		AppliesToAllPlans: recurly.NewBool(false),
-		CreatedAt:         recurly.NewTime(ts),
-		PlanCodes: &[]recurly.CouponPlanCode{
+		RedeemByDate:      NewTime(redeem),
+		SingleUse:         NewBool(true),
+		MaxRedemptions:    NewInt(10),
+		AppliesToAllPlans: NewBool(false),
+		CreatedAt:         NewTime(ts),
+		PlanCodes: &[]CouponPlanCode{
 			{Code: "gold"},
 			{Code: "platinum"},
 		},
@@ -301,7 +299,7 @@ func TestCoupons_Create(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><coupon></coupon>`)
 	})
 
-	resp, _, err := client.Coupons.Create(recurly.Coupon{})
+	resp, _, err := client.Coupons.Create(Coupon{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {

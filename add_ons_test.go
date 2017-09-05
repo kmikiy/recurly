@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -8,8 +8,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/blacklightcms/recurly"
 )
 
 // TestAddOnEncoding ensures structs are encoded to XML properly.
@@ -18,19 +16,19 @@ import (
 // have zero values that we want to send.
 func TestAddOns_Encoding(t *testing.T) {
 	tests := []struct {
-		v        recurly.AddOn
+		v        AddOn
 		expected string
 	}{
-		{v: recurly.AddOn{}, expected: "<add_on></add_on>"},
-		{v: recurly.AddOn{Code: "xyz"}, expected: "<add_on><add_on_code>xyz</add_on_code></add_on>"},
-		{v: recurly.AddOn{Name: "IP Addresses"}, expected: "<add_on><name>IP Addresses</name></add_on>"},
-		{v: recurly.AddOn{DefaultQuantity: recurly.NewInt(0)}, expected: "<add_on><default_quantity>0</default_quantity></add_on>"},
-		{v: recurly.AddOn{DefaultQuantity: recurly.NewInt(1)}, expected: "<add_on><default_quantity>1</default_quantity></add_on>"},
-		{v: recurly.AddOn{DisplayQuantityOnHostedPage: recurly.NewBool(true)}, expected: "<add_on><display_quantity_on_hosted_page>true</display_quantity_on_hosted_page></add_on>"},
-		{v: recurly.AddOn{DisplayQuantityOnHostedPage: recurly.NewBool(false)}, expected: "<add_on><display_quantity_on_hosted_page>false</display_quantity_on_hosted_page></add_on>"},
-		{v: recurly.AddOn{TaxCode: "digital"}, expected: "<add_on><tax_code>digital</tax_code></add_on>"},
-		{v: recurly.AddOn{UnitAmountInCents: recurly.UnitAmount{USD: 200}}, expected: "<add_on><unit_amount_in_cents><USD>200</USD></unit_amount_in_cents></add_on>"},
-		{v: recurly.AddOn{AccountingCode: "abc123"}, expected: "<add_on><accounting_code>abc123</accounting_code></add_on>"},
+		{v: AddOn{}, expected: "<add_on></add_on>"},
+		{v: AddOn{Code: "xyz"}, expected: "<add_on><add_on_code>xyz</add_on_code></add_on>"},
+		{v: AddOn{Name: "IP Addresses"}, expected: "<add_on><name>IP Addresses</name></add_on>"},
+		{v: AddOn{DefaultQuantity: NewInt(0)}, expected: "<add_on><default_quantity>0</default_quantity></add_on>"},
+		{v: AddOn{DefaultQuantity: NewInt(1)}, expected: "<add_on><default_quantity>1</default_quantity></add_on>"},
+		{v: AddOn{DisplayQuantityOnHostedPage: NewBool(true)}, expected: "<add_on><display_quantity_on_hosted_page>true</display_quantity_on_hosted_page></add_on>"},
+		{v: AddOn{DisplayQuantityOnHostedPage: NewBool(false)}, expected: "<add_on><display_quantity_on_hosted_page>false</display_quantity_on_hosted_page></add_on>"},
+		{v: AddOn{TaxCode: "digital"}, expected: "<add_on><tax_code>digital</tax_code></add_on>"},
+		{v: AddOn{UnitAmountInCents: UnitAmount{USD: 200}}, expected: "<add_on><unit_amount_in_cents><USD>200</USD></unit_amount_in_cents></add_on>"},
+		{v: AddOn{AccountingCode: "abc123"}, expected: "<add_on><accounting_code>abc123</accounting_code></add_on>"},
 	}
 
 	for _, tt := range tests {
@@ -71,7 +69,7 @@ func TestAddOns_List(t *testing.T) {
 		</add_ons>`)
 	})
 
-	resp, addOns, err := client.AddOns.List("gold", recurly.Params{"per_page": 1})
+	resp, addOns, err := client.AddOns.List("gold", Params{"per_page": 1})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {
@@ -80,18 +78,18 @@ func TestAddOns_List(t *testing.T) {
 		t.Fatalf("unexpected per_page: %s", pp)
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-06-28T12:34:56Z")
-	if !reflect.DeepEqual(addOns, []recurly.AddOn{
+	ts, _ := time.Parse(DateTimeFormat, "2011-06-28T12:34:56Z")
+	if !reflect.DeepEqual(addOns, []AddOn{
 		{
 			XMLName:                     xml.Name{Local: "add_on"},
 			Code:                        "ipaddresses",
 			Name:                        "IP Addresses",
-			DefaultQuantity:             recurly.NewInt(1),
-			DisplayQuantityOnHostedPage: recurly.NewBool(false),
+			DefaultQuantity:             NewInt(1),
+			DisplayQuantityOnHostedPage: NewBool(false),
 			TaxCode:                     "digital",
-			UnitAmountInCents:           recurly.UnitAmount{USD: 200},
+			UnitAmountInCents:           UnitAmount{USD: 200},
 			AccountingCode:              "abc123",
-			CreatedAt:                   recurly.NewTime(ts),
+			CreatedAt:                   NewTime(ts),
 		},
 	}) {
 		t.Fatalf("unexpected add ons: %v", addOns)
@@ -130,17 +128,17 @@ func TestAddOns_Get(t *testing.T) {
 		t.Fatal("expected get add_on to return OK")
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-06-28T12:34:56Z")
-	if !reflect.DeepEqual(a, &recurly.AddOn{
+	ts, _ := time.Parse(DateTimeFormat, "2011-06-28T12:34:56Z")
+	if !reflect.DeepEqual(a, &AddOn{
 		XMLName:                     xml.Name{Local: "add_on"},
 		Code:                        "ipaddresses",
 		Name:                        "IP Addresses",
-		DefaultQuantity:             recurly.NewInt(1),
-		DisplayQuantityOnHostedPage: recurly.NewBool(false),
+		DefaultQuantity:             NewInt(1),
+		DisplayQuantityOnHostedPage: NewBool(false),
 		TaxCode:                     "digital",
-		UnitAmountInCents:           recurly.UnitAmount{USD: 200},
+		UnitAmountInCents:           UnitAmount{USD: 200},
 		AccountingCode:              "abc123",
-		CreatedAt:                   recurly.NewTime(ts),
+		CreatedAt:                   NewTime(ts),
 	}) {
 		t.Fatalf("unexpected add on: %v", a)
 	}
@@ -178,7 +176,7 @@ func TestAddOns_Create(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><add_on></add_on>`)
 	})
 
-	resp, _, err := client.AddOns.Create("gold", recurly.AddOn{})
+	resp, _, err := client.AddOns.Create("gold", AddOn{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.StatusCode != 201 {
@@ -198,7 +196,7 @@ func TestAddOns_Update(t *testing.T) {
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><add_on></add_on>`)
 	})
 
-	resp, _, err := client.AddOns.Update("gold", "ipaddresses", recurly.AddOn{})
+	resp, _, err := client.AddOns.Update("gold", "ipaddresses", AddOn{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if resp.IsError() {

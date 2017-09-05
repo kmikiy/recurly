@@ -1,4 +1,4 @@
-package recurly_test
+package recurly
 
 import (
 	"bytes"
@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/blacklightcms/recurly"
 )
 
 func TestRedemptions_GetForAccount(t *testing.T) {
@@ -39,15 +37,15 @@ func TestRedemptions_GetForAccount(t *testing.T) {
 		t.Fatal("expected get redemption to return OK")
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-06-27T12:34:56Z")
-	if !reflect.DeepEqual(redemption, &recurly.Redemption{
+	ts, _ := time.Parse(DateTimeFormat, "2011-06-27T12:34:56Z")
+	if !reflect.DeepEqual(redemption, &Redemption{
 		CouponCode:             "special",
 		AccountCode:            "1",
-		SingleUse:              recurly.NewBool(false),
+		SingleUse:              NewBool(false),
 		TotalDiscountedInCents: 0,
 		Currency:               "USD",
 		State:                  "active",
-		CreatedAt:              recurly.NewTime(ts),
+		CreatedAt:              NewTime(ts),
 	}) {
 		t.Fatalf("unexpected redemption: %v", redemption)
 	}
@@ -101,15 +99,15 @@ func TestRedemptions_GetForInvoice(t *testing.T) {
 		t.Fatal("expected get redemption to return OK")
 	}
 
-	ts, _ := time.Parse(recurly.DateTimeFormat, "2011-06-27T12:34:56Z")
-	if !reflect.DeepEqual(redemption, &recurly.Redemption{
+	ts, _ := time.Parse(DateTimeFormat, "2011-06-27T12:34:56Z")
+	if !reflect.DeepEqual(redemption, &Redemption{
 		CouponCode:             "special",
 		AccountCode:            "1",
-		SingleUse:              recurly.NewBool(true),
+		SingleUse:              NewBool(true),
 		TotalDiscountedInCents: 0,
 		Currency:               "USD",
 		State:                  "inactive",
-		CreatedAt:              recurly.NewTime(ts),
+		CreatedAt:              NewTime(ts),
 	}) {
 		t.Fatalf("unexpected redemption: %v", redemption)
 	}
