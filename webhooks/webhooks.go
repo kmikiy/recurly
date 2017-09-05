@@ -94,6 +94,25 @@ type Invoice struct {
 	CollectionMethod    string           `xml:"collection_method,omitempty"`
 }
 
+// Usage represents the usage object sent in webhooks.
+type Usage struct {
+	XMLName            xml.Name         `xml:"usage,omitempty"`
+	ID                 int              `xml:"id,omitempty"`
+	SubscriptionUUID   string           `xml:"subscription_id,omitempty"`
+	AddOnCode          string           `xml:"add_on_code,omitempty"`
+	MeasuredUnitID     int              `xml:"measured_unit_id,omitempty"`
+	Amount             int              `xml:"amount,omitempty"`
+	MerchantTag        string           `xml:"merchant_tag,omitempty"`
+	RecordingTimestamp recurly.NullTime `xml:"recording_timestamp,omitempty"`
+	UsageTimestamp     recurly.NullTime `xml:"usage_timestamp,omitempty"`
+	CreatedAt          recurly.NullTime `xml:"created_at,omitempty"`
+	ModifiedAt         recurly.NullTime `xml:"modified_at,omitempty"`
+	BilledAt           recurly.NullTime `xml:"billed_at,omitempty"`
+	UsageType          string           `xml:"usage_type,omitempty"`
+	UnitAmountInCents  recurly.NullInt  `xml:"unit_amount_in_cents,omitempty"`
+	UsagePercentage    float64          `xml:"usage_percentage,omitempty"`
+}
+
 // Transaction constants.
 const (
 	TransactionFailureTypeDeclined  = "declined"
