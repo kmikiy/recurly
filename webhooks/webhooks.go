@@ -235,6 +235,8 @@ func Parse(r io.Reader) (interface{}, error) {
 		dst = &InvoiceNotificationNew{}
 	case InvoiceNotificationPastDueXMLName:
 		dst = &InvoiceNotificationPastDue{}
+	case InvoiceNotificationClosedXMLName:
+		dst = &InvoiceNotificationClosed{}
 
 	// Payment notifications
 	case PaymentNotificationSuccessfulXMLName:

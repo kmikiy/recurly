@@ -71,3 +71,36 @@ func TestParse_PastDueInvoiceNotification(t *testing.T) {
 		t.Fatalf("unexpected notification: %v", n)
 	}
 }
+
+func TestParse_ClosedInvoiceNotification(t *testing.T) {
+	xmlFile := MustOpenFile("testdata/invoices/closed_invoice_notification.xml")
+	createdAt := time.Date(2014, 1, 1, 20, 20, 29, 0, time.UTC)
+	closedAt := time.Date(2014, 1, 1, 20, 24, 02, 0, time.UTC)
+
+	result, err := Parse(xmlFile)
+	if err != nil {
+		t.Fatal(err)
+	} else if n, ok := result.(*InvoiceNotificationClosed); !ok {
+		t.Fatalf("unexpected type: %T, result")
+	} else if !reflect.DeepEqual(n, &InvoiceNotificationClosed{
+		Account: Account{
+			XMLName:   xml.Name{Local: "account"},
+			Code:      "1",
+			Email:     "verena@example.com",
+			FirstName: "Verana",
+			LastName:  "Example",
+		},
+		Invoice: Invoice{
+			XMLName:       xml.Name{Local: "invoice"},
+			UUID:          "ffc64d71d4b5404e93f13aac9c63b007",
+			State:         "collected",
+			Currency:      "USD",
+			CreatedAt:     recurly.NullTime{Time: &createdAt},
+			ClosedAt:      recurly.NullTime{Time: &closedAt},
+			InvoiceNumber: 1000,
+			TotalInCents:  1100,
+		},
+	}) {
+		t.Fatalf("unexpected notification: %v", n)
+	}
+}
