@@ -37,6 +37,11 @@ type AddOnsService interface {
 	Delete(planCode string, code string) (*Response, error)
 }
 
+// AddOnsService represents the interactions available for add ons.
+type AutomatedExportsService interface {
+	List() (*Response, []ExportDate, error)
+}
+
 // BillingService represents the interactions available for billing.
 type BillingService interface {
 	Get(accountCode string) (*Response, *Billing, error)

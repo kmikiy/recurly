@@ -19,6 +19,7 @@ func NewClient(httpClient *http.Client) *recurly.Client {
 	// Attach mock implementations.
 	client.Accounts = &AccountsService{}
 	client.Adjustments = &AdjustmentsService{}
+	client.AutomatedExports = &AutomatedExports{}
 	client.Billing = &BillingService{}
 	client.Coupons = &CouponsService{}
 	client.Redemptions = &RedemptionsService{}
