@@ -158,7 +158,7 @@ func (m *AddOnsService) Delete(planCode string, code string) (*recurly.Response,
 	return m.OnDelete(planCode, code)
 }
 
-var _ recurly.AutomatedExports = &AutomatedExports{}
+var _ recurly.AutomatedExportsService = &AutomatedExports{}
 
 // AddOnsService represents the interactions available for add ons.
 type AutomatedExports struct {
@@ -166,9 +166,9 @@ type AutomatedExports struct {
 	ListInvoked bool
 }
 
-func (m *AddOnsService) List() (*recurly.Response, []recurly.ExportDate, error) {
+func (m *AutomatedExports) List() (*recurly.Response, []recurly.ExportDate, error) {
 	m.ListInvoked = true
-	return m.OnList(planCode, params)
+	return m.OnList()
 }
 
 var _ recurly.BillingService = &BillingService{}
