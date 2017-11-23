@@ -41,6 +41,7 @@ type AddOnsService interface {
 type AutomatedExportsService interface {
 	ListExportDates() (*Response, []ExportDate, error)
 	ListExportFilesForDate(date time.Time) (*Response, []ExportFile, error)
+	DownloadExportFile(date time.Time, fileName string) (*Response, *DownloadExportFile, error)
 }
 
 // BillingService represents the interactions available for billing.

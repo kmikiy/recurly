@@ -51,3 +51,16 @@ func (s *automatedExportsImpl) ListExportFilesForDate(date time.Time) (*Response
 
 	return resp, a.ExportFiles, err
 }
+
+func (s *automatedExportsImpl) DownloadExportFile(date time.Time, fileName string) (*Response, *DownloadExportFile, error) {
+	action := fmt.Sprintf("export_dates/%s/export_files/%s", date.Format(DateDateFormat), fileName)
+	req, err := s.client.newRequest("GET", action, nil, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var a DownloadExportFile
+	resp, err := s.client.do(req, &a)
+
+	return resp, &a, err
+}
