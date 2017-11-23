@@ -2,6 +2,8 @@ package recurly
 
 import (
 	"encoding/xml"
+	"fmt"
+	"time"
 )
 
 var _ AutomatedExportsService = &automatedExportsImpl{}
@@ -19,7 +21,7 @@ func NewAutomatedExportsImpl(client *Client) *automatedExportsImpl {
 
 // List returns a list of the accounts on your site.
 // https://docs.recurly.com/api/accounts#list-accounts
-func (s *automatedExportsImpl) List() (*Response, []ExportDate, error) {
+func (s *automatedExportsImpl) ListExportDates() (*Response, []ExportDate, error) {
 	req, err := s.client.newRequest("GET", "export_dates", nil, nil)
 	if err != nil {
 		return nil, nil, err
@@ -32,4 +34,20 @@ func (s *automatedExportsImpl) List() (*Response, []ExportDate, error) {
 	resp, err := s.client.do(req, &a)
 
 	return resp, a.ExportDates, err
+}
+
+func (s *automatedExportsImpl) ListExportFilesForDate(date time.Time) (*Response, []ExportFile, error) {
+	action := fmt.Sprintf("export_dates/%s/export_files", date.Format(DateDateFormat))
+	req, err := s.client.newRequest("GET", action, nil, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var a struct {
+		XMLName     xml.Name     `xml:"export_files"`
+		ExportFiles []ExportFile `xml:"export_file"`
+	}
+	resp, err := s.client.do(req, &a)
+
+	return resp, a.ExportFiles, err
 }

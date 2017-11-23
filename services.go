@@ -39,7 +39,8 @@ type AddOnsService interface {
 
 // AddOnsService represents the interactions available for add ons.
 type AutomatedExportsService interface {
-	List() (*Response, []ExportDate, error)
+	ListExportDates() (*Response, []ExportDate, error)
+	ListExportFilesForDate(date time.Time) (*Response, []ExportFile, error)
 }
 
 // BillingService represents the interactions available for billing.
