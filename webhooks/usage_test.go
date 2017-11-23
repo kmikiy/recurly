@@ -40,6 +40,7 @@ func TestParse_UsageNotificationNewUsage(t *testing.T) {
 				BilledAt:           recurly.NewTime(billedTs),
 				UsageType:          "PRICE",
 				UnitAmountInCents:  recurly.NewInt(50),
+				UsagePercentage:    recurly.NewFloat(0),
 			},
 		})
 	}

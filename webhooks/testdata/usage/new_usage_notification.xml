@@ -21,7 +21,7 @@
     <modified_at type="datetime" nil="true"></modified_at>
     <billed_at type="datetime">2016-04-28T21:57:54+00:00</billed_at>
     <usage_type>PRICE</usage_type>
-    <unit_amount_in_cents nil="true">50</unit_amount_in_cents>
+    <unit_amount_in_cents>50</unit_amount_in_cents>
     <usage_percentage type="float"></usage_percentage>
   </usage>
 </new_usage_notification>
