@@ -25,6 +25,7 @@ type Transaction struct {
 	AmountInCents    int
 	TaxInCents       int
 	Currency         string
+	Description      string
 	Status           string
 	PaymentMethod    string
 	Reference        string
@@ -65,6 +66,7 @@ func (t Transaction) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		AmountInCents int      `xml:"amount_in_cents"`
 		TaxInCents    int      `xml:"tax_in_cents,omitempty"`
 		Currency      string   `xml:"currency"`
+		Description   string   `xml:"description,omitempty"`
 		Status        string   `xml:"status,omitempty"`
 		PaymentMethod string   `xml:"payment_method,omitempty"`
 		Reference     string   `xml:"reference,omitempty"`
@@ -80,6 +82,7 @@ func (t Transaction) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		AmountInCents: t.AmountInCents,
 		TaxInCents:    t.TaxInCents,
 		Currency:      t.Currency,
+		Description:   t.Description,
 		Status:        t.Status,
 		PaymentMethod: t.PaymentMethod,
 		Reference:     t.Reference,
@@ -107,6 +110,7 @@ func (t *Transaction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 		AmountInCents    int               `xml:"amount_in_cents"`
 		TaxInCents       int               `xml:"tax_in_cents,omitempty"`
 		Currency         string            `xml:"currency"`
+		Description      string            `xml:"description,omitempty"`
 		Status           string            `xml:"status,omitempty"`
 		PaymentMethod    string            `xml:"payment_method,omitempty"`
 		Reference        string            `xml:"reference,omitempty"`
@@ -135,6 +139,7 @@ func (t *Transaction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 		AmountInCents:    v.AmountInCents,
 		TaxInCents:       v.TaxInCents,
 		Currency:         v.Currency,
+		Description:      v.Description,
 		Status:           v.Status,
 		PaymentMethod:    v.PaymentMethod,
 		Reference:        v.Reference,
