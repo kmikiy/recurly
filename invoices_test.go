@@ -94,8 +94,9 @@ func TestInvoices_List(t *testing.T) {
 	} else if resp.Request.URL.Query().Get("per_page") != "1" {
 		t.Fatalf("expected per_page parameter of 1, given %s", resp.Request.URL.Query().Get("per_page"))
 	} else if !reflect.DeepEqual(invoices, []Invoice{{
-		XMLName:     xml.Name{Local: "invoice"},
-		AccountCode: "1",
+		XMLName:               xml.Name{Local: "invoice"},
+		InvoiceNumberFromHref: 1005,
+		AccountCode:           "1",
 		Address: Address{
 			Address: "400 Alabama St.",
 			City:    "San Francisco",
@@ -226,8 +227,9 @@ func TestInvoices_ListAccount(t *testing.T) {
 		t.Fatalf("unexpected per_page: %s", pp)
 	} else if !reflect.DeepEqual(invoices, []Invoice{
 		{
-			XMLName:     xml.Name{Local: "invoice"},
-			AccountCode: "1",
+			XMLName:               xml.Name{Local: "invoice"},
+			InvoiceNumberFromHref: 1005,
+			AccountCode:           "1",
 			Address: Address{
 				Address: "400 Alabama St.",
 				City:    "San Francisco",
@@ -414,8 +416,9 @@ func TestInvoices_Get(t *testing.T) {
 
 	ts, _ := time.Parse(DateTimeFormat, "2011-08-25T12:00:00Z")
 	if !reflect.DeepEqual(invoice, &Invoice{
-		XMLName:     xml.Name{Local: "invoice"},
-		AccountCode: "1",
+		XMLName:               xml.Name{Local: "invoice"},
+		InvoiceNumberFromHref: 1005,
+		AccountCode:           "1",
 		Address: Address{
 			Address: "400 Alabama St.",
 			City:    "San Francisco",

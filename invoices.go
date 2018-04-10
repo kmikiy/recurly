@@ -109,10 +109,7 @@ func (i *Invoice) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	if err := d.DecodeElement(&v, &start); err != nil {
 		return err
 	}
-	InvoiceNumberFromHref, err := strconv.Atoi(rxHREF.FindString(v.HREF))
-	if err != nil {
-		return err
-	}
+	InvoiceNumberFromHref, _ := strconv.Atoi(rxHREF.FindString(v.HREF))
 
 	*i = Invoice{
 		InvoiceNumberFromHref: InvoiceNumberFromHref,
