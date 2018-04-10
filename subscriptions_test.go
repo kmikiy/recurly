@@ -368,6 +368,53 @@ func TestSubscriptions_List(t *testing.T) {
 						<quantity type="integer">1</quantity>
 					</subscription_add_on>
 				</subscription_add_ons>
+				<invoice href="https://your-subdomain.recurly.com/v2/invoices/1108">
+					<account href="https://your-subdomain.recurly.com/v2/accounts/1"/>
+					<address>
+						<address1>123 Main St.</address1>
+						<address2 nil="nil"/>
+						<city>San Francisco</city>
+						<state>CA</state>
+						<zip>94105</zip>
+						<country>US</country>
+						<phone nil="nil"/>
+					</address>
+					<shipping_address>
+						<name>Verena Example</name>
+						<address1>123 Main St.</address1>
+						<address2>Suite 101</address2>
+						<city>Grand Rapids</city>
+						<state>MI</state>
+						<zip>49506</zip>
+						<country>US</country>
+						<phone>555-222-1212</phone>
+					</shipping_address>
+					<uuid>37bff127995e4e088dc50845779661f6</uuid>
+					<state>open</state>
+					<invoice_number_prefix/>
+					<invoice_number nil="nil"/>
+					<po_number nil="nil"/>
+					<vat_number nil="nil"/>
+					<subtotal_in_cents type="integer">100</subtotal_in_cents>
+					<tax_in_cents type="integer">-346</tax_in_cents>
+					<total_in_cents type="integer">0</total_in_cents>
+					<currency>EUR</currency>
+					<created_at nil="nil"/>
+					<updated_at nil="nil"/>
+					<closed_at nil="nil"/>
+					<terms_and_conditions nil="nil"/>
+					<customer_notes nil="nil"/>
+					<tax_type>usst</tax_type>
+					<tax_region>CA</tax_region>
+					<tax_rate type="float">0.0875</tax_rate>
+					<net_terms type="integer">0</net_terms>
+					<collection_method>automatic</collection_method>
+					<line_items type="array">
+					<!-- Invoice detail includes proration amounts if applicable -->
+					</line_items>
+					<transactions type="array">
+					</transactions>
+ 				</invoice>
 				<a name="cancel" href="https://your-subdomain.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/cancel" method="put"/>
 				<a name="terminate" href="https://your-subdomain.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/terminate" method="put"/>
 				<a name="postpone" href="https://your-subdomain.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/postpone" method="put"/>
@@ -395,8 +442,43 @@ func TestSubscriptions_List(t *testing.T) {
 				Code: "gold",
 				Name: "Gold plan",
 			},
-			AccountCode:            "1",
-			InvoiceNumber:          1108,
+			AccountCode: "1",
+			Invoice: Invoice{
+				InvoiceNumberFromHref: 1108,
+				XMLName:               xml.Name{Space: "", Local: "invoice"},
+				AccountCode:           "1",
+				Address: Address{
+					Address:  "123 Main St.",
+					Address2: "",
+					City:     "San Francisco",
+					State:    "CA",
+					Zip:      "94105",
+					Country:  "US",
+					Phone:    ""},
+				SubscriptionUUID:      "",
+				OriginalInvoiceNumber: 0,
+				UUID:                  "37bff127995e4e088dc50845779661f6",
+				State:                 "open",
+				InvoiceNumberPrefix:   "",
+				InvoiceNumber:         0,
+				PONumber:              "",
+				VATNumber:             "",
+				SubtotalInCents:       100,
+				TaxInCents:            -346,
+				TotalInCents:          0,
+				Currency:              "EUR",
+				CreatedAt:             NullTime{Time: (*time.Time)(nil), Raw: ""},
+				ClosedAt:              NullTime{Time: (*time.Time)(nil), Raw: ""},
+				TaxType:               "usst",
+				TaxRegion:             "CA",
+				TaxRate:               0.0875,
+				NetTerms:              NullInt{Int: 0, Valid: true},
+				CollectionMethod:      "automatic",
+				TermsAndConditions:    "",
+				CustomerNotes:         "",
+				VatReverseChargeNotes: "",
+				LineItems:             []Adjustment(nil),
+				Transactions:          []Transaction(nil)},
 			UUID:                   "44f83d7cba354d5b84812419f923ea96",
 			State:                  "active",
 			UnitAmountInCents:      800,
@@ -490,8 +572,11 @@ func TestSubscriptions_ListAccount(t *testing.T) {
 				Code: "gold",
 				Name: "Gold plan",
 			},
-			AccountCode:            "1",
-			InvoiceNumber:          1108,
+			AccountCode: "1",
+			Invoice: Invoice{
+				InvoiceNumberFromHref: 1108,
+				XMLName:               xml.Name{Space: "", Local: "invoice"},
+			},
 			UUID:                   "44f83d7cba354d5b84812419f923ea96",
 			State:                  "active",
 			UnitAmountInCents:      800,
@@ -567,8 +652,11 @@ func TestSubscriptions_Get(t *testing.T) {
 			Code: "gold",
 			Name: "Gold plan",
 		},
-		AccountCode:            "1",
-		InvoiceNumber:          1108,
+		AccountCode: "1",
+		Invoice: Invoice{
+			InvoiceNumberFromHref: 1108,
+			XMLName:               xml.Name{Space: "", Local: "invoice"},
+		},
 		UUID:                   "44f83d7cba354d5b84812419f923ea96", // UUID has been sanitized
 		State:                  "active",
 		UnitAmountInCents:      800,
@@ -685,8 +773,11 @@ func TestSubscriptions_Get_PendingSubscription(t *testing.T) {
 			Code: "gold",
 			Name: "Gold plan",
 		},
-		AccountCode:            "1",
-		InvoiceNumber:          1108,
+		AccountCode: "1",
+		Invoice: Invoice{
+			InvoiceNumberFromHref: 1108,
+			XMLName:               xml.Name{Space: "", Local: "invoice"},
+		},
 		UUID:                   "44f83d7cba354d5b84812419f923ea96",
 		State:                  "active",
 		UnitAmountInCents:      800,
