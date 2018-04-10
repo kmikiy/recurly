@@ -2,6 +2,7 @@ package recurly
 
 import (
 	"encoding/xml"
+	"strconv"
 	"time"
 )
 
@@ -46,6 +47,7 @@ const (
 // Unmarshaling an invoice is handled by the custom UnmarshalXML function.
 type Invoice struct {
 	XMLName               xml.Name      `xml:"invoice,omitempty"`
+	InvoiceNumberFromHref int           `xml:"-"`
 	AccountCode           string        `xml:"-"`
 	Address               Address       `xml:"-"`
 	SubscriptionUUID      string        `xml:"-"`
@@ -78,6 +80,7 @@ type Invoice struct {
 // for types like href.
 func (i *Invoice) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var v struct {
+		HREF                  string        `xml:"href,attr"`
 		XMLName               xml.Name      `xml:"invoice,omitempty"`
 		AccountCode           hrefString    `xml:"account,omitempty"` // Read only
 		Address               Address       `xml:"address,omitempty"`
@@ -106,7 +109,13 @@ func (i *Invoice) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	if err := d.DecodeElement(&v, &start); err != nil {
 		return err
 	}
+	InvoiceNumberFromHref, err := strconv.Atoi(rxHREF.FindString(v.HREF))
+	if err != nil {
+		return err
+	}
+
 	*i = Invoice{
+		InvoiceNumberFromHref: InvoiceNumberFromHref,
 		XMLName:               v.XMLName,
 		AccountCode:           string(v.AccountCode),
 		Address:               v.Address,

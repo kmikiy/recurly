@@ -49,7 +49,7 @@ type Subscription struct {
 	XMLName                xml.Name             `xml:"subscription"`
 	Plan                   NestedPlan           `xml:"plan,omitempty"`
 	AccountCode            string               `xml:"-"`
-	InvoiceNumber          int                  `xml:"-"`
+	Invoice                Invoice              `xml:"invoice,omitempty"`
 	UUID                   string               `xml:"uuid,omitempty"`
 	State                  string               `xml:"state,omitempty"`
 	UnitAmountInCents      int                  `xml:"unit_amount_in_cents,omitempty"`
@@ -81,7 +81,7 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		XMLName                xml.Name             `xml:"subscription"`
 		Plan                   NestedPlan           `xml:"plan,omitempty"`
 		AccountCode            hrefString           `xml:"account"`
-		InvoiceNumber          hrefInt              `xml:"invoice"`
+		Invoice                Invoice              `xml:"invoice"`
 		UUID                   string               `xml:"uuid,omitempty"`
 		State                  string               `xml:"state,omitempty"`
 		UnitAmountInCents      int                  `xml:"unit_amount_in_cents,omitempty"`
@@ -112,7 +112,7 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		XMLName:                v.XMLName,
 		Plan:                   v.Plan,
 		AccountCode:            string(v.AccountCode),
-		InvoiceNumber:          int(v.InvoiceNumber),
+		Invoice:                v.Invoice,
 		UUID:                   v.UUID,
 		State:                  v.State,
 		UnitAmountInCents:      v.UnitAmountInCents,
