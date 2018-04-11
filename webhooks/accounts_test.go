@@ -12,7 +12,7 @@ func TestParse_AccountNotificationNew(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*AccountNotificationNew); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &AccountNotificationNew{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -32,7 +32,7 @@ func TestParse_AccountNotificationUpdated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*AccountNotificationUpdated); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &AccountNotificationUpdated{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -52,7 +52,7 @@ func TestParse_AccountNotificationCanceled(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*AccountNotificationCanceled); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &AccountNotificationCanceled{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -72,7 +72,7 @@ func TestParse_AccountNotificationBillingInfoUpdated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*AccountNotificationBillingInfoUpdated); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &AccountNotificationBillingInfoUpdated{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -92,7 +92,7 @@ func TestParse_AccountNotificationBillingInfoUpdateFailed(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*AccountNotificationBillingInfoUpdateFailed); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &AccountNotificationBillingInfoUpdateFailed{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -112,7 +112,7 @@ func TestParse_AccountNotificationNewShippingAddress(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*AccountNotificationNewShippingAddress); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &AccountNotificationNewShippingAddress{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},
@@ -145,7 +145,7 @@ func TestParse_AccountNotificationUpdatedShippingAddress(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*AccountNotificationUpdatedShippingAddress); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &AccountNotificationUpdatedShippingAddress{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},
@@ -178,7 +178,7 @@ func TestParse_AccountNotificationDeletedShippingAddress(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*AccountNotificationDeletedShippingAddress); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &AccountNotificationDeletedShippingAddress{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},

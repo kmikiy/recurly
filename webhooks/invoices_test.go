@@ -16,7 +16,7 @@ func TestParse_InvoiceNotificationNew(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*InvoiceNotificationNew); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &InvoiceNotificationNew{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -48,7 +48,7 @@ func TestParse_PastDueInvoiceNotification(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*InvoiceNotificationPastDue); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &InvoiceNotificationPastDue{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},
@@ -81,7 +81,7 @@ func TestParse_ClosedInvoiceNotification(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*InvoiceNotificationClosed); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &InvoiceNotificationClosed{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},

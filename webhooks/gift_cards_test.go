@@ -18,7 +18,7 @@ func TestParse_GiftCardNotificationPurchased(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*GiftCardNotificationPurchased); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &GiftCardNotificationPurchased{
 		GiftCard: GiftCard{
 			XMLName:           xml.Name{Local: "gift_card"},
@@ -56,7 +56,7 @@ func TestParse_GiftCardNotificationCanceled(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*GiftCardNotificationCanceled); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &GiftCardNotificationCanceled{
 		GiftCard: GiftCard{
 			XMLName:           xml.Name{Local: "gift_card"},
@@ -95,7 +95,7 @@ func TestParse_GiftCardNotificationUpdated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*GiftCardNotificationUpdated); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &GiftCardNotificationUpdated{
 		GiftCard: GiftCard{
 			XMLName:           xml.Name{Local: "gift_card"},
@@ -133,7 +133,7 @@ func TestParse_GiftCardNotificationRegenerated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*GiftCardNotificationRegenerated); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &GiftCardNotificationRegenerated{
 		GiftCard: GiftCard{
 			XMLName:           xml.Name{Local: "gift_card"},
@@ -172,7 +172,7 @@ func TestParse_GiftCardNotificationRedeemed(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*GiftCardNotificationRedeemed); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &GiftCardNotificationRedeemed{
 		GiftCard: GiftCard{
 			XMLName:              xml.Name{Local: "gift_card"},
@@ -212,7 +212,7 @@ func TestParse_GiftCardNotificationUpdatedBalance(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*GiftCardNotificationUpdatedBalance); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &GiftCardNotificationUpdatedBalance{
 		GiftCard: GiftCard{
 			XMLName:              xml.Name{Local: "gift_card"},

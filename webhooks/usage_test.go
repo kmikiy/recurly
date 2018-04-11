@@ -20,7 +20,7 @@ func TestParse_UsageNotificationNewUsage(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*UsageNotificationNewUsage); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else {
 		assert.Equal(t, n, &UsageNotificationNewUsage{
 			Account: Account{

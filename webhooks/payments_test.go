@@ -13,7 +13,7 @@ func TestParse_PaymentNotificationSuccessful(t *testing.T) {
 	if result, err := Parse(xmlFile); err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*PaymentNotificationSuccessful); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &PaymentNotificationSuccessful{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},
@@ -48,7 +48,7 @@ func TestParse_PaymentNotificationFailed(t *testing.T) {
 	if result, err := Parse(xmlFile); err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*PaymentNotificationFailed); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &PaymentNotificationFailed{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},
@@ -85,7 +85,7 @@ func TestParse_PaymentNotificationVoid(t *testing.T) {
 	if result, err := Parse(xmlFile); err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*PaymentNotificationVoid); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &PaymentNotificationVoid{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},
@@ -121,7 +121,7 @@ func TestParse_PaymentNotificationSuccessfulRefund(t *testing.T) {
 	if result, err := Parse(xmlFile); err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*PaymentNotificationSuccessfulRefund); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &PaymentNotificationSuccessfulRefund{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},

@@ -21,7 +21,7 @@ func TestParse_SubscriptionNotificationNew(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*SubscriptionNotificationNew); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &SubscriptionNotificationNew{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -64,7 +64,7 @@ func TestParse_SubscriptionNotificationUpdated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*SubscriptionNotificationUpdated); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &SubscriptionNotificationUpdated{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -107,7 +107,7 @@ func TestParse_SubscriptionNotificationCanceled(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*SubscriptionNotificationCanceled); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &SubscriptionNotificationCanceled{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -150,7 +150,7 @@ func TestParse_SubscriptionNotificationExpired(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*SubscriptionNotificationExpired); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &SubscriptionNotificationExpired{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
@@ -191,7 +191,7 @@ func TestParse_SubscriptionNotificationRenewed(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*SubscriptionNotificationRenewed); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &SubscriptionNotificationRenewed{
 		Account: Account{
 			XMLName:     xml.Name{Local: "account"},
@@ -231,7 +231,7 @@ func TestParse_SubscriptionNotificationReactivated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*SubscriptionNotificationReactivated); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if !reflect.DeepEqual(n, &SubscriptionNotificationReactivated{
 		Account: Account{
 			XMLName:   xml.Name{Local: "account"},
