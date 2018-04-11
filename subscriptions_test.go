@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // TestSubscriptionsEncoding ensures structs are encoded to XML properly.
@@ -334,92 +336,47 @@ func TestSubscriptions_List(t *testing.T) {
 		}
 		w.WriteHeader(200)
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?>
-		<subscriptions type="array">
-			<subscription href="https://your-subdomain.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96">
-				<account href="https://your-subdomain.recurly.com/v2/accounts/1"/>
-				<invoice href="https://your-subdomain.recurly.com/v2/invoices/1108"/>
-				<plan href="https://your-subdomain.recurly.com/v2/plans/gold">
-				  <plan_code>gold</plan_code>
-				  <name>Gold plan</name>
-				</plan>
-				<uuid>44f83d7cba354d5b84812419f923ea96</uuid>
-				<state>active</state>
-				<unit_amount_in_cents type="integer">800</unit_amount_in_cents>
-				<currency>EUR</currency>
-				<quantity type="integer">1</quantity>
-				<activated_at type="datetime">2011-05-27T07:00:00Z</activated_at>
-				<canceled_at nil="nil"></canceled_at>
-				<expires_at nil="nil"></expires_at>
-				<current_period_started_at type="datetime">2011-06-27T07:00:00Z</current_period_started_at>
-				<current_period_ends_at type="datetime">2010-07-27T07:00:00Z</current_period_ends_at>
-				<trial_started_at nil="nil"></trial_started_at>
-				<trial_ends_at nil="nil"></trial_ends_at>
-				<tax_in_cents type="integer">72</tax_in_cents>
-				<tax_type>usst</tax_type>
-				<tax_region>CA</tax_region>
-				<tax_rate type="float">0.0875</tax_rate>
-				<po_number nil="nil"></po_number>
-				<net_terms type="integer">0</net_terms>
-				<subscription_add_ons type="array">
-					<subscription_add_on>
-						<add_on_type>fixed</add_on_type>
-						<add_on_code>my_add_on</add_on_code>
-						<unit_amount_in_cents type="integer">1</unit_amount_in_cents>
-						<quantity type="integer">1</quantity>
-					</subscription_add_on>
-				</subscription_add_ons>
-				<invoice href="https://your-subdomain.recurly.com/v2/invoices/1108">
+			<subscriptions type="array">
+				<subscription href="https://your-subdomain.recurly.com/v2/subscriptions/3c42a34d1442f840373a4b40de85a80a">
 					<account href="https://your-subdomain.recurly.com/v2/accounts/1"/>
-					<address>
-						<address1>123 Main St.</address1>
-						<address2 nil="nil"/>
-						<city>San Francisco</city>
-						<state>CA</state>
-						<zip>94105</zip>
-						<country>US</country>
-						<phone nil="nil"/>
-					</address>
-					<shipping_address>
-						<name>Verena Example</name>
-						<address1>123 Main St.</address1>
-						<address2>Suite 101</address2>
-						<city>Grand Rapids</city>
-						<state>MI</state>
-						<zip>49506</zip>
-						<country>US</country>
-						<phone>555-222-1212</phone>
-					</shipping_address>
-					<uuid>37bff127995e4e088dc50845779661f6</uuid>
-					<state>open</state>
-					<invoice_number_prefix/>
-					<invoice_number nil="nil"/>
-					<po_number nil="nil"/>
-					<vat_number nil="nil"/>
-					<subtotal_in_cents type="integer">100</subtotal_in_cents>
-					<tax_in_cents type="integer">-346</tax_in_cents>
-					<total_in_cents type="integer">0</total_in_cents>
+					<redemptions href="https://your-subdomain.recurly.com/v2/subscriptions/3c42a34d1442f840373a4b40de85a80a/redemptions"/>
+					<plan href="https://your-subdomain.recurly.com/v2/plans/gold">
+						<plan_code>gold</plan_code>
+						<name>Gold plan</name>
+					</plan>
+					<revenue_schedule_type>evenly</revenue_schedule_type>
+					<uuid>3c42a34d1442f840373a4b40de85a80a</uuid>
+					<state>expired</state>
+					<unit_amount_in_cents type="integer">4500</unit_amount_in_cents>
 					<currency>EUR</currency>
-					<created_at nil="nil"/>
-					<updated_at nil="nil"/>
-					<closed_at nil="nil"/>
+					<quantity type="integer">1</quantity>
+					<activated_at type="datetime">2017-03-15T21:20:36Z</activated_at>
+					<canceled_at type="datetime">2017-03-15T21:20:51Z</canceled_at>
+					<expires_at type="datetime">2017-03-15T21:20:51Z</expires_at>
+					<updated_at type="datetime">2017-03-15T21:20:51Z</updated_at>
+					<total_billing_cycles nil="nil"/>
+					<remaining_billing_cycles nil="nil"/>
+					<current_period_started_at type="datetime">2017-03-15T21:20:36Z</current_period_started_at>
+					<current_period_ends_at type="datetime">2017-04-15T21:20:36Z</current_period_ends_at>
+					<trial_started_at nil="nil"/>
+					<trial_ends_at nil="nil"/>
 					<terms_and_conditions nil="nil"/>
 					<customer_notes nil="nil"/>
+					<started_with_gift type="boolean">false</started_with_gift>
+					<converted_at nil="nil"/>
+					<imported_trial type="boolean">false</imported_trial>
+					<no_billing_info_reason/>
+					<tax_in_cents type="integer">383</tax_in_cents>
 					<tax_type>usst</tax_type>
 					<tax_region>CA</tax_region>
-					<tax_rate type="float">0.0875</tax_rate>
+					<tax_rate type="float">0.085</tax_rate>
+					<po_number nil="nil"/>
 					<net_terms type="integer">0</net_terms>
 					<collection_method>automatic</collection_method>
-					<line_items type="array">
-					<!-- Invoice detail includes proration amounts if applicable -->
-					</line_items>
-					<transactions type="array">
-					</transactions>
- 				</invoice>
-				<a name="cancel" href="https://your-subdomain.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/cancel" method="put"/>
-				<a name="terminate" href="https://your-subdomain.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/terminate" method="put"/>
-				<a name="postpone" href="https://your-subdomain.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/postpone" method="put"/>
-			</subscription>
-		</subscriptions>`)
+					<subscription_add_ons type="array"></subscription_add_ons>
+				</subscription>
+				<!-- Continued... -->
+			</subscriptions>`)
 	})
 
 	r, subscriptions, err := client.Subscriptions.List(Params{"per_page": 1})
@@ -431,80 +388,41 @@ func TestSubscriptions_List(t *testing.T) {
 		t.Fatalf("unexpected per_page: %s", pp)
 	}
 
-	activated, _ := time.Parse(DateTimeFormat, "2011-05-27T07:00:00Z")
-	cpStartedAt, _ := time.Parse(DateTimeFormat, "2011-06-27T07:00:00Z")
-	cpEndsAt, _ := time.Parse(DateTimeFormat, "2010-07-27T07:00:00Z")
+	activated, _ := time.Parse(DateTimeFormat, "2017-03-15T21:20:36Z")
+	canceledAt, _ := time.Parse(DateTimeFormat, "2017-03-15T21:20:51Z")
+	cpStartedAt, _ := time.Parse(DateTimeFormat, "2017-03-15T21:20:36Z")
+	cpEndsAt, _ := time.Parse(DateTimeFormat, "2017-04-15T21:20:36Z")
 
-	if !reflect.DeepEqual(subscriptions, []Subscription{
+	assert.Equal(t, []Subscription{
 		{
 			XMLName: xml.Name{Local: "subscription"},
 			Plan: NestedPlan{
 				Code: "gold",
 				Name: "Gold plan",
 			},
-			AccountCode: "1",
-			Invoice: Invoice{
-				InvoiceNumberFromHref: 1108,
-				XMLName:               xml.Name{Space: "", Local: "invoice"},
-				AccountCode:           "1",
-				Address: Address{
-					Address:  "123 Main St.",
-					Address2: "",
-					City:     "San Francisco",
-					State:    "CA",
-					Zip:      "94105",
-					Country:  "US",
-					Phone:    ""},
-				SubscriptionUUID:      "",
-				OriginalInvoiceNumber: 0,
-				UUID:                  "37bff127995e4e088dc50845779661f6",
-				State:                 "open",
-				InvoiceNumberPrefix:   "",
-				InvoiceNumber:         0,
-				PONumber:              "",
-				VATNumber:             "",
-				SubtotalInCents:       100,
-				TaxInCents:            -346,
-				TotalInCents:          0,
-				Currency:              "EUR",
-				CreatedAt:             NullTime{Time: (*time.Time)(nil), Raw: ""},
-				ClosedAt:              NullTime{Time: (*time.Time)(nil), Raw: ""},
-				TaxType:               "usst",
-				TaxRegion:             "CA",
-				TaxRate:               0.0875,
-				NetTerms:              NullInt{Int: 0, Valid: true},
-				CollectionMethod:      "automatic",
-				TermsAndConditions:    "",
-				CustomerNotes:         "",
-				VatReverseChargeNotes: "",
-				LineItems:             []Adjustment(nil),
-				Transactions:          []Transaction(nil)},
-			UUID:                   "44f83d7cba354d5b84812419f923ea96",
-			State:                  "active",
-			UnitAmountInCents:      800,
+			AccountCode:            "1",
+			RevenueScheduleType:    "evenly",
+			UUID:                   "3c42a34d1442f840373a4b40de85a80a",
+			State:                  "expired",
+			UnitAmountInCents:      4500,
 			Currency:               "EUR",
 			Quantity:               1,
 			ActivatedAt:            NewTime(activated),
+			CanceledAt:             NewTime(canceledAt),
+			ExpiresAt:              NewTime(canceledAt),
+			UpdatedAt:              NewTime(canceledAt),
 			CurrentPeriodStartedAt: NewTime(cpStartedAt),
 			CurrentPeriodEndsAt:    NewTime(cpEndsAt),
-			TaxInCents:             72,
+			TaxInCents:             383,
 			TaxType:                "usst",
 			TaxRegion:              "CA",
-			TaxRate:                0.0875,
+			TaxRate:                0.085,
 			NetTerms:               NewInt(0),
-			SubscriptionAddOns: []SubscriptionAddOn{
-				{
-					XMLName:           xml.Name{Local: "subscription_add_on"},
-					Type:              "fixed",
-					Code:              "my_add_on",
-					Quantity:          1,
-					UnitAmountInCents: 1,
-				},
-			},
+			StartedWithGift:        NewBool(false),
+			ImportedTrial:          NewBool(false),
+			CollectionMethod:       "automatic",
 		},
-	}) {
-		t.Fatalf("unexpected subscriptions: %v", subscriptions)
-	}
+	}, subscriptions)
 }
 
 func TestSubscriptions_ListAccount(t *testing.T) {
@@ -565,18 +483,14 @@ func TestSubscriptions_ListAccount(t *testing.T) {
 	cpStartedAt, _ := time.Parse(DateTimeFormat, "2011-06-27T07:00:00Z")
 	cpEndsAt, _ := time.Parse(DateTimeFormat, "2010-07-27T07:00:00Z")
 
-	if !reflect.DeepEqual(subscriptions, []Subscription{
+	assert.Equal(t, []Subscription{
 		{
 			XMLName: xml.Name{Local: "subscription"},
 			Plan: NestedPlan{
 				Code: "gold",
 				Name: "Gold plan",
 			},
-			AccountCode: "1",
-			Invoice: Invoice{
-				InvoiceNumberFromHref: 1108,
-				XMLName:               xml.Name{Space: "", Local: "invoice"},
-			},
+			AccountCode:            "1",
 			UUID:                   "44f83d7cba354d5b84812419f923ea96",
 			State:                  "active",
 			UnitAmountInCents:      800,
@@ -591,9 +505,7 @@ func TestSubscriptions_ListAccount(t *testing.T) {
 			TaxRate:                0.0875,
 			NetTerms:               NewInt(0),
 		},
-	}) {
-		t.Fatalf("unexpected subscriptions: %v", subscriptions)
-	}
+	}, subscriptions)
 }
 
 func TestSubscriptions_Get(t *testing.T) {
@@ -646,17 +558,13 @@ func TestSubscriptions_Get(t *testing.T) {
 		t.Fatal("expected list subcriptions to return OK")
 	}
 
-	if !reflect.DeepEqual(subscription, &Subscription{
+	assert.Equal(t, &Subscription{
 		XMLName: xml.Name{Local: "subscription"},
 		Plan: NestedPlan{
 			Code: "gold",
 			Name: "Gold plan",
 		},
-		AccountCode: "1",
-		Invoice: Invoice{
-			InvoiceNumberFromHref: 1108,
-			XMLName:               xml.Name{Space: "", Local: "invoice"},
-		},
+		AccountCode:            "1",
 		UUID:                   "44f83d7cba354d5b84812419f923ea96", // UUID has been sanitized
 		State:                  "active",
 		UnitAmountInCents:      800,
@@ -670,9 +578,7 @@ func TestSubscriptions_Get(t *testing.T) {
 		TaxRegion:              "CA",
 		TaxRate:                0.0875,
 		NetTerms:               NewInt(0),
-	}) {
-		t.Fatalf("unexpected subscription: %v", subscription)
-	}
+	}, subscription)
 }
 
 func TestSubscriptions_Get_ErrNotFound(t *testing.T) {
@@ -767,17 +673,13 @@ func TestSubscriptions_Get_PendingSubscription(t *testing.T) {
 		t.Fatal("expected list subcriptions to return OK")
 	}
 
-	if !reflect.DeepEqual(subscription, &Subscription{
+	assert.Equal(t, &Subscription{
 		XMLName: xml.Name{Local: "subscription"},
 		Plan: NestedPlan{
 			Code: "gold",
 			Name: "Gold plan",
 		},
-		AccountCode: "1",
-		Invoice: Invoice{
-			InvoiceNumberFromHref: 1108,
-			XMLName:               xml.Name{Space: "", Local: "invoice"},
-		},
+		AccountCode:            "1",
 		UUID:                   "44f83d7cba354d5b84812419f923ea96",
 		State:                  "active",
 		UnitAmountInCents:      800,
@@ -815,9 +717,7 @@ func TestSubscriptions_Get_PendingSubscription(t *testing.T) {
 				},
 			},
 		},
-	}) {
-		t.Fatalf("unexpected subscription: %#v", subscription)
-	}
+	}, subscription)
 }
 
 func TestSubscriptions_Create(t *testing.T) {
@@ -919,15 +819,212 @@ func TestSubscriptions_Preview(t *testing.T) {
 			t.Fatalf("unexpected method: %s", r.Method)
 		}
 		w.WriteHeader(201)
-		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><subscription></subscription>`)
+		fmt.Fprint(w, `<subscription href="https://your-subdomain.recurly.com/v2/subscriptions/43ae00fadf77887688fe9c4041b7af19">
+			<account href="https://your-subdomain.recurly.com/v2/accounts/1"/>
+			<shipping_address href="https://your-subdomain.recurly.com/v2/accounts/1/shipping_addresses/2438624754966020308"/>
+			<address>
+			  <name>Verena Example</name>
+			  <address1>123 Main St.</address1>
+			  <address2>Suite 101</address2>
+			  <city>San Francisco</city>
+			  <state>CA</state>
+			  <zip>94105</zip>
+			  <country>US</country>
+			  <phone>555-222-1212</phone>
+			</address>
+			<plan href="https://your-subdomain.recurly.com/v2/plans/gold">
+			  <plan_code>gold</plan_code>
+			  <name>Gold plan</name>
+			</plan>
+			<revenue_schedule_type>evenly</revenue_schedule_type>
+			<uuid>43ae00fadf77887688fe9c4041b7af19</uuid>
+			<state>active</state>
+			<unit_amount_in_cents type="integer">100</unit_amount_in_cents>
+			<currency>EUR</currency>
+			<quantity type="integer">1</quantity>
+			<activated_at type="datetime">2018-03-19T17:01:48Z</activated_at>
+			<canceled_at nil="nil"/>
+			<expires_at nil="nil"/>
+			<updated_at type="datetime">2018-03-19T17:01:49Z</updated_at>
+			<total_billing_cycles nil="nil"/>
+			<remaining_billing_cycles nil="nil"/>
+			<current_period_started_at type="datetime">2018-03-19T17:01:48Z</current_period_started_at>
+			<current_period_ends_at type="datetime">2018-04-19T17:01:48Z</current_period_ends_at>
+			<trial_started_at nil="nil"/>
+			<trial_ends_at nil="nil"/>
+			<terms_and_conditions nil="nil"/>
+			<customer_notes nil="nil"/>
+			<started_with_gift type="boolean">false</started_with_gift>
+			<converted_at nil="nil"/>
+			<imported_trial type="boolean">false</imported_trial>
+			<no_billing_info_reason/>
+			<cost_in_cents type="integer">109</cost_in_cents>
+			<tax_in_cents type="integer">9</tax_in_cents>
+			<tax_type>usst</tax_type>
+			<tax_region>CA</tax_region>
+			<tax_rate type="float">0.085</tax_rate>
+			<po_number nil="nil"/>
+			<net_terms type="integer">0</net_terms>
+			<collection_method>automatic</collection_method>
+			<subscription_add_ons type="array">
+			</subscription_add_ons>
+			<invoice_collection>
+			  <charge_invoice/>
+			  <credit_invoices type="array">
+				<credit_invoice href="">
+				  <account href="https://your-subdomain.recurly.com/v2/accounts/1"/>
+				  <address>
+					<address1>123 Main St.</address1>
+					<address2 nil="nil"/>
+					<city>San Francisco</city>
+					<state>CA</state>
+					<zip>94105</zip>
+					<country>US</country>
+					<phone nil="nil"/>
+				  </address>
+				  <shipping_address>
+					<name>Verena Example</name>
+					<address1>123 Main St.</address1>
+					<address2>Suite 101</address2>
+					<city>San Francisco</city>
+					<state>CA</state>
+					<zip>94105</zip>
+					<country>US</country>
+					<phone>555-222-1212</phone>
+				  </shipping_address>
+				  <uuid>43ae03bcac4991f6d4ab2442aaa0928d</uuid>
+				  <state>open</state>
+				  <invoice_number_prefix/>
+				  <invoice_number nil="nil"/>
+				  <vat_number nil="nil"/>
+				  <tax_in_cents type="integer">-344</tax_in_cents>
+				  <total_in_cents type="integer">-4394</total_in_cents>
+				  <currency>EUR</currency>
+				  <created_at nil="nil"/>
+				  <updated_at nil="nil"/>
+				  <attempt_next_collection_at nil="nil"/>
+				  <closed_at nil="nil"/>
+				  <customer_notes nil="nil"/>
+				  <recovery_reason nil="nil"/>
+				  <subtotal_before_discount_in_cents type="integer">-4400</subtotal_before_discount_in_cents>
+				  <subtotal_in_cents type="integer">-4050</subtotal_in_cents>
+				  <discount_in_cents type="integer">-350</discount_in_cents>
+				  <due_on nil="nil"/>
+				  <balance_in_cents type="integer">-4394</balance_in_cents>
+				  <type>credit</type>
+				  <origin>immediate_change</origin>
+				  <credit_payments type="array">
+				  </credit_payments>
+				  <net_terms nil="nil"/>
+				  <collection_method nil="nil"/>
+				  <po_number nil="nil"/>
+				  <terms_and_conditions nil="nil"/>
+				  <tax_type>usst</tax_type>
+				  <tax_region>CA</tax_region>
+				  <tax_rate type="float">0.085</tax_rate>
+				  <line_items type="array">
+					<!-- Invoice detail includes proration amounts if applicable -->
+				  </line_items>
+				  <transactions type="array">
+				  </transactions>
+				</credit_invoice>
+			  </credit_invoices>
+			</invoice_collection>
+		  </subscription>`)
 	})
 
-	r, _, err := client.Subscriptions.Preview(NewSubscription{})
+	r, s, err := client.Subscriptions.Preview(NewSubscription{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
 		t.Fatal("expected preview subscription to return OK")
 	}
+	activatedAt, _ := time.Parse(DateTimeFormat, "2018-03-19T17:01:48Z")
+	updatedAt, _ := time.Parse(DateTimeFormat, "2018-03-19T17:01:49Z")
+	currentPeriodStartedAt, _ := time.Parse(DateTimeFormat, "2018-03-19T17:01:48Z")
+	currentPeriodEndsAt, _ := time.Parse(DateTimeFormat, "2018-04-19T17:01:48Z")
+	assert.Equal(t, &Subscription{
+		XMLName:     xml.Name{Local: "subscription"},
+		AccountCode: "1",
+		Address: Address{
+			Name:     "Verena Example",
+			Address:  "123 Main St.",
+			Address2: "Suite 101",
+			City:     "San Francisco",
+			State:    "CA",
+			Zip:      "94105",
+			Country:  "US",
+			Phone:    "555-222-1212",
+		},
+		Plan: NestedPlan{
+			Code: "gold",
+			Name: "Gold plan",
+		},
+		RevenueScheduleType:    "evenly",
+		UUID:                   "43ae00fadf77887688fe9c4041b7af19",
+		State:                  "active",
+		UnitAmountInCents:      100,
+		Currency:               "EUR",
+		Quantity:               1,
+		ActivatedAt:            NewTime(activatedAt),
+		UpdatedAt:              NewTime(updatedAt),
+		CurrentPeriodStartedAt: NewTime(currentPeriodStartedAt),
+		CurrentPeriodEndsAt:    NewTime(currentPeriodEndsAt),
+		StartedWithGift:        NewBool(false),
+		ImportedTrial:          NewBool(false),
+		CostInCents:            109,
+		TaxInCents:             9,
+		TaxType:                "usst",
+		TaxRegion:              "CA",
+		TaxRate:                0.085,
+		NetTerms:               NewInt(0),
+		CollectionMethod:       "automatic",
+		InvoiceCollection: InvoiceCollection{
+			XMLName: xml.Name{Space: "", Local: "invoice_collection"},
+			ChargeInvoice: ChargeInvoice{
+				XMLName: xml.Name{Space: "", Local: "charge_invoice"},
+			},
+			CreditInvoices: []CreditInvoice{
+				CreditInvoice{
+					XMLName: xml.Name{Space: "", Local: "credit_invoice"},
+					InvoiceCommon: InvoiceCommon{
+						AccountCode: "1",
+						Address: Address{
+							Address: "123 Main St.",
+							City:    "San Francisco",
+							State:   "CA",
+							Zip:     "94105",
+							Country: "US",
+						},
+						ShippingAddress: Address{
+							Name:     "Verena Example",
+							Address:  "123 Main St.",
+							Address2: "Suite 101",
+							City:     "San Francisco",
+							State:    "CA",
+							Zip:      "94105",
+							Country:  "US",
+							Phone:    "555-222-1212",
+						},
+						UUID:                          "43ae03bcac4991f6d4ab2442aaa0928d",
+						State:                         "open",
+						TaxInCents:                    -344,
+						TotalInCents:                  -4394,
+						Currency:                      "EUR",
+						SubtotalBeforeDiscountInCents: -4400,
+						SubtotalInCents:               -4050,
+						DiscountInCents:               -350,
+						BalanceInCents:                -4394,
+						Type:                          "credit",
+						Origin:                        "immediate_change",
+						TaxType:                       "usst",
+						TaxRegion:                     "CA",
+						TaxRate:                       0.085,
+					},
+				},
+			},
+		},
+	}, s)
 }
 
 func TestSubscriptions_Update(t *testing.T) {

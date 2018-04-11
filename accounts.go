@@ -41,6 +41,7 @@ type AccountBalance struct {
 
 // Address is used for embedded addresses within other structs.
 type Address struct {
+	Name     string `xml:"name,omitempty"`
 	Address  string `xml:"address1,omitempty"`
 	Address2 string `xml:"address2,omitempty"`
 	City     string `xml:"city,omitempty"`

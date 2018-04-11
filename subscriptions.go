@@ -47,9 +47,10 @@ const (
 // Subscription represents an individual subscription.
 type Subscription struct {
 	XMLName                xml.Name             `xml:"subscription"`
+	Address                Address              `xml:"address,omitempty"`
 	Plan                   NestedPlan           `xml:"plan,omitempty"`
 	AccountCode            string               `xml:"-"`
-	Invoice                Invoice              `xml:"invoice,omitempty"`
+	RevenueScheduleType    string               `xml:"revenue_schedule_type,omitempty"`
 	UUID                   string               `xml:"uuid,omitempty"`
 	State                  string               `xml:"state,omitempty"`
 	UnitAmountInCents      int                  `xml:"unit_amount_in_cents,omitempty"`
@@ -59,10 +60,19 @@ type Subscription struct {
 	ActivatedAt            NullTime             `xml:"activated_at,omitempty"`
 	CanceledAt             NullTime             `xml:"canceled_at,omitempty"`
 	ExpiresAt              NullTime             `xml:"expires_at,omitempty"`
+	UpdatedAt              NullTime             `xml:"updated_at,omitempty"`
+	TotalBillingCycles     NullInt              `xml:"total_billing_cycles,omitempty"`
+	RemainingBillingCycles NullInt              `xml:"remaining_billing_cycles,omitempty"`
 	CurrentPeriodStartedAt NullTime             `xml:"current_period_started_at,omitempty"`
 	CurrentPeriodEndsAt    NullTime             `xml:"current_period_ends_at,omitempty"`
 	TrialStartedAt         NullTime             `xml:"trial_started_at,omitempty"`
 	TrialEndsAt            NullTime             `xml:"trial_ends_at,omitempty"`
+	TermsAndConditions     string               `xml:"terms_and_conditions,omitempty"`
+	CustomerNotes          string               `xml:"customer_notes,omitempty"`
+	StartedWithGift        NullBool             `xml:"started_with_gift,omitempty"`
+	ConvertedAt            NullTime             `xml:"converted_at,omitempty"`
+	ImportedTrial          NullBool             `xml:"imported_trial,omitempty"`
+	CostInCents            int                  `xml:"cost_in_cents,omitempty"`
 	TaxInCents             int                  `xml:"tax_in_cents,omitempty"`
 	TaxType                string               `xml:"tax_type,omitempty"`
 	TaxRegion              string               `xml:"tax_region,omitempty"`
@@ -72,6 +82,7 @@ type Subscription struct {
 	SubscriptionAddOns     []SubscriptionAddOn  `xml:"subscription_add_ons>subscription_add_on,omitempty"`
 	PendingSubscription    *PendingSubscription `xml:"pending_subscription,omitempty"`
 	CollectionMethod       string               `xml:"collection_method"`
+	InvoiceCollection      InvoiceCollection    `xml:"invoice_collection,omitempty"`
 }
 
 // UnmarshalXML unmarshals transactions and handles intermediary state during unmarshaling
@@ -79,9 +90,10 @@ type Subscription struct {
 func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var v struct {
 		XMLName                xml.Name             `xml:"subscription"`
+		Address                Address              `xml:"address,omitempty"`
 		Plan                   NestedPlan           `xml:"plan,omitempty"`
 		AccountCode            hrefString           `xml:"account"`
-		Invoice                Invoice              `xml:"invoice"`
+		RevenueScheduleType    string               `xml:"revenue_schedule_type,omitempty"`
 		UUID                   string               `xml:"uuid,omitempty"`
 		State                  string               `xml:"state,omitempty"`
 		UnitAmountInCents      int                  `xml:"unit_amount_in_cents,omitempty"`
@@ -91,10 +103,19 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		ActivatedAt            NullTime             `xml:"activated_at,omitempty"`
 		CanceledAt             NullTime             `xml:"canceled_at,omitempty"`
 		ExpiresAt              NullTime             `xml:"expires_at,omitempty"`
+		UpdatedAt              NullTime             `xml:"updated_at,omitempty"`
+		TotalBillingCycles     NullInt              `xml:"total_billing_cycles,omitempty"`
+		RemainingBillingCycles NullInt              `xml:"remaining_billing_cycles,omitempty"`
 		CurrentPeriodStartedAt NullTime             `xml:"current_period_started_at,omitempty"`
 		CurrentPeriodEndsAt    NullTime             `xml:"current_period_ends_at,omitempty"`
 		TrialStartedAt         NullTime             `xml:"trial_started_at,omitempty"`
 		TrialEndsAt            NullTime             `xml:"trial_ends_at,omitempty"`
+		TermsAndConditions     string               `xml:"terms_and_conditions,omitempty"`
+		CustomerNotes          string               `xml:"customer_notes,omitempty"`
+		StartedWithGift        NullBool             `xml:"started_with_gift,omitempty"`
+		ConvertedAt            NullTime             `xml:"converted_at,omitempty"`
+		ImportedTrial          NullBool             `xml:"imported_trial,omitempty"`
+		CostInCents            int                  `xml:"cost_in_cents,omitempty"`
 		TaxInCents             int                  `xml:"tax_in_cents,omitempty"`
 		TaxType                string               `xml:"tax_type,omitempty"`
 		TaxRegion              string               `xml:"tax_region,omitempty"`
@@ -104,15 +125,17 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		SubscriptionAddOns     []SubscriptionAddOn  `xml:"subscription_add_ons>subscription_add_on,omitempty"`
 		PendingSubscription    *PendingSubscription `xml:"pending_subscription,omitempty"`
 		CollectionMethod       string               `xml:"collection_method,omitempty"`
+		InvoiceCollection      InvoiceCollection    `xml:"invoice_collection,omitempty"`
 	}
 	if err := d.DecodeElement(&v, &start); err != nil {
 		return err
 	}
 	*s = Subscription{
 		XMLName:                v.XMLName,
+		Address:                v.Address,
 		Plan:                   v.Plan,
 		AccountCode:            string(v.AccountCode),
-		Invoice:                v.Invoice,
+		RevenueScheduleType:    v.RevenueScheduleType,
 		UUID:                   v.UUID,
 		State:                  v.State,
 		UnitAmountInCents:      v.UnitAmountInCents,
@@ -122,10 +145,19 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		ActivatedAt:            v.ActivatedAt,
 		CanceledAt:             v.CanceledAt,
 		ExpiresAt:              v.ExpiresAt,
+		UpdatedAt:              v.UpdatedAt,
+		TotalBillingCycles:     v.TotalBillingCycles,
+		RemainingBillingCycles: v.RemainingBillingCycles,
 		CurrentPeriodStartedAt: v.CurrentPeriodStartedAt,
 		CurrentPeriodEndsAt:    v.CurrentPeriodEndsAt,
 		TrialStartedAt:         v.TrialStartedAt,
 		TrialEndsAt:            v.TrialEndsAt,
+		TermsAndConditions:     v.TermsAndConditions,
+		CustomerNotes:          v.CustomerNotes,
+		StartedWithGift:        v.StartedWithGift,
+		ConvertedAt:            v.ConvertedAt,
+		ImportedTrial:          v.ImportedTrial,
+		CostInCents:            v.CostInCents,
 		TaxInCents:             v.TaxInCents,
 		TaxType:                v.TaxType,
 		TaxRegion:              v.TaxRegion,
@@ -135,6 +167,7 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		SubscriptionAddOns:     v.SubscriptionAddOns,
 		PendingSubscription:    v.PendingSubscription,
 		CollectionMethod:       v.CollectionMethod,
+		InvoiceCollection:      v.InvoiceCollection,
 	}
 
 	return nil
