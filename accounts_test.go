@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // TestAccountEncoding ensures structs are encoded to XML properly.
@@ -109,7 +111,7 @@ func TestAccounts_List(t *testing.T) {
 	}
 
 	ts, _ := time.Parse(DateTimeFormat, "2011-10-25T12:00:00Z")
-	if !reflect.DeepEqual(accounts, []Account{Account{
+	assert.Equal(t, accounts, []Account{Account{
 		XMLName:   xml.Name{Local: "account"},
 		Code:      "1",
 		State:     "active",
@@ -126,9 +128,8 @@ func TestAccounts_List(t *testing.T) {
 		},
 		HostedLoginToken: "a92468579e9c4231a6c0031c4716c01d",
 		CreatedAt:        NewTime(ts),
-	}}) {
-		t.Fatalf("unexpected account: %v", accounts)
-	}
+	},
+	})
 }
 
 func TestAccounts_List_Pagination(t *testing.T) {
