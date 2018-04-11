@@ -66,35 +66,45 @@ func TestAccounts_List(t *testing.T) {
 		w.Header().Set("Link", `<https://your-subdomain.recurly.com/v2/accounts?cursor=1304958672>; rel="next"`)
 		w.WriteHeader(200)
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?>
-		<accounts>
+		<accounts type="array">
 			<account href="https://your-subdomain.recurly.com/v2/accounts/1">
-			  <adjustments href="https://your-subdomain.recurly.com/v2/accounts/1/adjustments"/>
-			  <billing_info href="https://your-subdomain.recurly.com/v2/accounts/1/billing_info"/>
-			  <invoices href="https://your-subdomain.recurly.com/v2/accounts/1/invoices"/>
-			  <redemption href="https://your-subdomain.recurly.com/v2/accounts/1/redemption"/>
-			  <subscriptions href="https://your-subdomain.recurly.com/v2/accounts/1/subscriptions"/>
-			  <transactions href="https://your-subdomain.recurly.com/v2/accounts/1/transactions"/>
-			  <account_code>1</account_code>
-			  <state>active</state>
-			  <username nil="nil"></username>
-			  <email>verena@example.com</email>
-			  <first_name>Verena</first_name>
-			  <last_name>Example</last_name>
-			  <company_name></company_name>
-			  <vat_number nil="nil"></vat_number>
-			  <tax_exempt type="boolean">false</tax_exempt>
-			  <address>
-			    <address1>123 Main St.</address1>
-			    <address2 nil="nil"></address2>
-			    <city>San Francisco</city>
-			    <state>CA</state>
-			    <zip>94105</zip>
-			    <country>US</country>
-			    <phone nil="nil"></phone>
-			  </address>
-			  <accept_language nil="nil"></accept_language>
-			  <hosted_login_token>a92468579e9c4231a6c0031c4716c01d</hosted_login_token>
-			  <created_at type="datetime">2011-10-25T12:00:00Z</created_at>
+				<adjustments href="https://your-subdomain.recurly.com/v2/accounts/1/adjustments"/>
+				<account_acquisition href="https://your-subdomain.recurly.com/v2/accounts/1/acquisition"/>
+				<account_balance href="https://your-subdomain.recurly.com/v2/accounts/1/balance"/>
+				<billing_info href="https://your-subdomain.recurly.com/v2/accounts/1/billing_info"/>
+				<invoices href="https://your-subdomain.recurly.com/v2/accounts/1/invoices"/>
+				<shipping_addresses href="https://your-subdomain.recurly.com/v2/accounts/1/shipping_addresses"/>
+				<subscriptions href="https://your-subdomain.recurly.com/v2/accounts/1/subscriptions"/>
+				<transactions href="https://your-subdomain.recurly.com/v2/accounts/1/transactions"/>
+				<account_code>1</account_code>
+				<state>active</state>
+				<username>verena1234</username>
+				<email>verena@example.com</email>
+				<cc_emails>bob@example.com,susan@example.com</cc_emails>
+				<first_name>Verena</first_name>
+				<last_name>Example</last_name>
+				<company_name>New Company Name</company_name>
+				<vat_number nil="nil"/>
+				<tax_exempt type="boolean">false</tax_exempt>
+				<address>
+					<address1>123 Main St.</address1>
+					<address2 nil="nil"/>
+					<city>San Francisco</city>
+					<state>CA</state>
+					<zip>94105</zip>
+					<country>US</country>
+					<phone nil="nil"/>
+				</address>
+				<accept_language nil="nil"/>
+				<hosted_login_token>71c122cb16fc90252ff845eacf5d7814</hosted_login_token>
+				<created_at type="datetime">2016-08-03T15:44:05Z</created_at>
+				<updated_at type="datetime">2017-03-15T21:22:18Z</updated_at>
+				<closed_at nil="nil"/>
+				<has_live_subscription type="boolean">false</has_live_subscription>
+				<has_active_subscription type="boolean">false</has_active_subscription>
+				<has_future_subscription type="boolean">false</has_future_subscription>
+				<has_canceled_subscription type="boolean">false</has_canceled_subscription>
+				<has_past_due_invoice type="boolean">false</has_past_due_invoice>
 			</account>
 		</accounts>`)
 	})
@@ -110,15 +120,18 @@ func TestAccounts_List(t *testing.T) {
 		t.Fatalf("unexpected cursor: %s", resp.Next())
 	}
 
-	ts, _ := time.Parse(DateTimeFormat, "2011-10-25T12:00:00Z")
-	assert.Equal(t, accounts, []Account{Account{
-		XMLName:   xml.Name{Local: "account"},
-		Code:      "1",
-		State:     "active",
-		Email:     "verena@example.com",
-		FirstName: "Verena",
-		LastName:  "Example",
-		TaxExempt: NewBool(false),
+	tsCreated, _ := time.Parse(DateTimeFormat, "2016-08-03T15:44:05Z")
+	tsUpdated, _ := time.Parse(DateTimeFormat, "2017-03-15T21:22:18Z")
+	assert.Equal(t, []Account{Account{
+		XMLName:     xml.Name{Local: "account"},
+		Code:        "1",
+		State:       "active",
+		Email:       "verena@example.com",
+		FirstName:   "Verena",
+		LastName:    "Example",
+		CompanyName: "New Company Name",
+		TaxExempt:   NewBool(false),
+		Username:    "verena1234",
 		Address: Address{
 			Address: "123 Main St.",
 			City:    "San Francisco",
@@ -126,10 +139,16 @@ func TestAccounts_List(t *testing.T) {
 			Zip:     "94105",
 			Country: "US",
 		},
-		HostedLoginToken: "a92468579e9c4231a6c0031c4716c01d",
-		CreatedAt:        NewTime(ts),
+		HostedLoginToken:        "71c122cb16fc90252ff845eacf5d7814",
+		CreatedAt:               NewTime(tsCreated),
+		UpdatedAt:               NewTime(tsUpdated),
+		HasActiveSubscription:   NewBool(false),
+		HasCanceledSubscription: NewBool(false),
+		HasFutureSubscription:   NewBool(false),
+		HasLiveSubscription:     NewBool(false),
+		HasPastDueInvoice:       NewBool(false),
 	},
-	})
+	}, accounts)
 }
 
 func TestAccounts_List_Pagination(t *testing.T) {
@@ -170,40 +189,43 @@ func TestAccounts_Get(t *testing.T) {
 		w.WriteHeader(200)
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?>
 			<account href="https://your-subdomain.recurly.com/v2/accounts/1">
-			  <adjustments href="https://your-subdomain.recurly.com/v2/accounts/1/adjustments"/>
-			  <billing_info href="https://your-subdomain.recurly.com/v2/accounts/1/billing_info"/>
-			  <invoices href="https://your-subdomain.recurly.com/v2/accounts/1/invoices"/>
-			  <redemption href="https://your-subdomain.recurly.com/v2/accounts/1/redemption"/>
-			  <subscriptions href="https://your-subdomain.recurly.com/v2/accounts/1/subscriptions"/>
-			  <transactions href="https://your-subdomain.recurly.com/v2/accounts/1/transactions"/>
-			  <account_code>1</account_code>
-			  <state>active</state>
-			  <username nil="nil"></username>
-			  <email>verena@example.com</email>
-			  <first_name>Verena</first_name>
-			  <last_name>Example</last_name>
-			  <company_name></company_name>
-			  <vat_number nil="nil"></vat_number>
-			  <tax_exempt type="boolean">false</tax_exempt>
-			  <address>
-			    <address1>123 Main St.</address1>
-			    <address2 nil="nil"></address2>
-			    <city>San Francisco</city>
-			    <state>CA</state>
-			    <zip>94105</zip>
-			    <country>US</country>
-			    <phone nil="nil"></phone>
-			  </address>
-			  <accept_language nil="nil"></accept_language>
-			  <hosted_login_token>a92468579e9c4231a6c0031c4716c01d</hosted_login_token>
-			  <has_live_subscription type="boolean">true</has_live_subscription>
-			  <has_active_subscription type="boolean">true</has_active_subscription>
-			  <has_future_subscription type="boolean">false</has_future_subscription>
-			  <has_canceled_subscription type="boolean">false</has_canceled_subscription>
-			  <has_past_due_invoice type="boolean">false</has_past_due_invoice>
-			  <created_at type="datetime">2011-10-25T12:00:00Z</created_at>
-			  <updated_at type="datetime">2016-07-11T17:56:24Z</updated_at>
-			  <closed_at nil="nil"/> 
+				<adjustments href="https://your-subdomain.recurly.com/v2/accounts/1/adjustments"/>
+				<account_acquisition href="https://your-subdomain.recurly.com/v2/accounts/1/acquisition"/>
+				<account_balance href="https://your-subdomain.recurly.com/v2/accounts/1/balance"/>
+				<billing_info href="https://your-subdomain.recurly.com/v2/accounts/1/billing_info"/>
+				<invoices href="https://your-subdomain.recurly.com/v2/accounts/1/invoices"/>
+				<shipping_addresses href="https://your-subdomain.recurly.com/v2/accounts/1/shipping_addresses"/>
+				<subscriptions href="https://your-subdomain.recurly.com/v2/accounts/1/subscriptions"/>
+				<transactions href="https://your-subdomain.recurly.com/v2/accounts/1/transactions"/>
+				<account_code>1</account_code>
+				<state>active</state>
+				<username>verena1234</username>
+				<email>verena@example.com</email>
+				<cc_emails>bob@example.com,susan@example.com</cc_emails>
+				<first_name>Verena</first_name>
+				<last_name>Example</last_name>
+				<company_name>New Company Name</company_name>
+				<vat_number nil="nil"/>
+				<tax_exempt type="boolean">false</tax_exempt>
+				<address>
+					<address1>123 Main St.</address1>
+					<address2 nil="nil"/>
+					<city>San Francisco</city>
+					<state>CA</state>
+					<zip>94105</zip>
+					<country>US</country>
+					<phone nil="nil"/>
+				</address>
+				<accept_language nil="nil"/>
+				<hosted_login_token>71c122cb16fc90252ff845eacf5d7814</hosted_login_token>
+				<created_at type="datetime">2016-08-03T15:44:05Z</created_at>
+				<updated_at type="datetime">2017-03-15T21:22:18Z</updated_at>
+				<closed_at nil="nil"/>
+				<has_live_subscription type="boolean">false</has_live_subscription>
+				<has_active_subscription type="boolean">false</has_active_subscription>
+				<has_future_subscription type="boolean">false</has_future_subscription>
+				<has_canceled_subscription type="boolean">false</has_canceled_subscription>
+				<has_past_due_invoice type="boolean">false</has_past_due_invoice>
 			</account>`)
 	})
 
@@ -214,16 +236,18 @@ func TestAccounts_Get(t *testing.T) {
 		t.Fatal("expected get accounts to return OK")
 	}
 
-	tsCreated, _ := time.Parse(DateTimeFormat, "2011-10-25T12:00:00Z")
-	tsUpdated, _ := time.Parse(DateTimeFormat, "2016-07-11T17:56:24Z")
-	if !reflect.DeepEqual(a, &Account{
-		XMLName:   xml.Name{Local: "account"},
-		Code:      "1",
-		State:     "active",
-		Email:     "verena@example.com",
-		FirstName: "Verena",
-		LastName:  "Example",
-		TaxExempt: NewBool(false),
+	tsCreated, _ := time.Parse(DateTimeFormat, "2016-08-03T15:44:05Z")
+	tsUpdated, _ := time.Parse(DateTimeFormat, "2017-03-15T21:22:18Z")
+	assert.Equal(t, &Account{
+		XMLName:     xml.Name{Local: "account"},
+		Code:        "1",
+		State:       "active",
+		Email:       "verena@example.com",
+		FirstName:   "Verena",
+		LastName:    "Example",
+		Username:    "verena1234",
+		TaxExempt:   NewBool(false),
+		CompanyName: "New Company Name",
 		Address: Address{
 			Address: "123 Main St.",
 			City:    "San Francisco",
@@ -231,18 +255,15 @@ func TestAccounts_Get(t *testing.T) {
 			Zip:     "94105",
 			Country: "US",
 		},
-		HostedLoginToken:        "a92468579e9c4231a6c0031c4716c01d",
+		HostedLoginToken:        "71c122cb16fc90252ff845eacf5d7814",
 		CreatedAt:               NewTime(tsCreated),
 		UpdatedAt:               NewTime(tsUpdated),
-		HasLiveSubscription:     NewBool(true),
-		HasActiveSubscription:   NewBool(true),
+		HasLiveSubscription:     NewBool(false),
+		HasActiveSubscription:   NewBool(false),
 		HasFutureSubscription:   NewBool(false),
 		HasCanceledSubscription: NewBool(false),
 		HasPastDueInvoice:       NewBool(false),
-	}) {
-		t.Fatalf("unexpected value: %v", a)
-	}
-
+	}, a)
 }
 
 func TestAccounts_Get_ErrNotFound(t *testing.T) {
