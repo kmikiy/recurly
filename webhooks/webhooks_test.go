@@ -11,7 +11,7 @@ func TestParse_ErrUnknownNotification(t *testing.T) {
 	if result != nil {
 		t.Fatalf("unexpected notification: %#v", result)
 	} else if e, ok := err.(ErrUnknownNotification); !ok {
-		t.Fatalf("unexpected type: %T, result")
+		t.Fatalf("unexpected type: %T", result)
 	} else if err.Error() != "unknown notification: unknown_notification" {
 		t.Fatalf("unexpected error string: %s", err.Error())
 	} else if e.Name() != "unknown_notification" {
