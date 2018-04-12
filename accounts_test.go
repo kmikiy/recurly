@@ -312,19 +312,15 @@ func TestAccounts_LookupAccountBalance(t *testing.T) {
 		t.Fatal("expected get account balance to return OK")
 	}
 
-	if !reflect.DeepEqual(b, &AccountBalance{
+	assert.Equal(t, &AccountBalance{
 		XMLName:     xml.Name{Local: "account_balance"},
 		AccountCode: "1",
 		PastDue:     false,
-		Balance:     3000,
-	}) {
-		t.Fatalf("unexpected value: \n%+v \n%+v", b, &AccountBalance{
-			XMLName:     xml.Name{Local: "account_balance"},
-			AccountCode: "1",
-			PastDue:     false,
-			Balance:     3000,
-		})
-	}
+		BalanceInCents: BalanceInCents{
+			USD: 3000,
+			EUR: 0,
+		},
+	}, b)
 }
 
 func TestAccounts_Create(t *testing.T) {

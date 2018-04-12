@@ -33,10 +33,15 @@ type Account struct {
 
 // AccountBalance is used for getting the account balance.
 type AccountBalance struct {
-	XMLName     xml.Name `xml:"account_balance"`
-	AccountCode string   `xml:"-"`
-	PastDue     bool     `xml:"past_due"`
-	Balance     int      `xml:"balance_in_cents>USD"`
+	XMLName        xml.Name       `xml:"account_balance"`
+	AccountCode    string         `xml:"-"`
+	PastDue        bool           `xml:"past_due"`
+	BalanceInCents BalanceInCents `xml:"balance_in_cents"`
+}
+
+type BalanceInCents struct {
+	USD int `xml:"USD"`
+	EUR int `xml:"EUR"`
 }
 
 // Address is used for embedded addresses within other structs.
