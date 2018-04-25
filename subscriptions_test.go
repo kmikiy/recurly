@@ -73,7 +73,7 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 				Account: Account{
 					Code: "123",
 				},
-				UnitAmountInCents: 800,
+				UnitAmountInCents: NewInt(800),
 			},
 			expected: "<subscription><plan_code>gold</plan_code><account><account_code>123</account_code></account><unit_amount_in_cents>800</unit_amount_in_cents><currency>USD</currency></subscription>",
 		},

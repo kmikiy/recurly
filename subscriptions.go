@@ -217,7 +217,7 @@ type NewSubscription struct {
 	Account                 Account              `xml:"account"`
 	SubscriptionAddOns      *[]SubscriptionAddOn `xml:"subscription_add_ons>subscription_add_on,omitempty"`
 	CouponCode              string               `xml:"coupon_code,omitempty"`
-	UnitAmountInCents       int                  `xml:"unit_amount_in_cents,omitempty"`
+	UnitAmountInCents       NullInt              `xml:"unit_amount_in_cents,omitempty"`
 	Currency                string               `xml:"currency"`
 	Quantity                int                  `xml:"quantity,omitempty"`
 	TrialEndsAt             NullTime             `xml:"trial_ends_at,omitempty"`
