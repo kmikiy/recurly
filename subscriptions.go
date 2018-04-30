@@ -246,7 +246,7 @@ type UpdateSubscription struct {
 	Timeframe          string               `xml:"timeframe,omitempty"`
 	PlanCode           string               `xml:"plan_code,omitempty"`
 	Quantity           int                  `xml:"quantity,omitempty"`
-	UnitAmountInCents  int                  `xml:"unit_amount_in_cents,omitempty"`
+	UnitAmountInCents  NullInt              `xml:"unit_amount_in_cents,omitempty"`
 	CollectionMethod   string               `xml:"collection_method,omitempty"`
 	NetTerms           NullInt              `xml:"net_terms,omitempty"`
 	PONumber           string               `xml:"po_number,omitempty"`
