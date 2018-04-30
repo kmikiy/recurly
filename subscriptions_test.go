@@ -276,7 +276,7 @@ func TestSubscriptions_UpdateSubscription_Encoding(t *testing.T) {
 			expected: "<subscription><quantity>14</quantity></subscription>",
 		},
 		{
-			v:        UpdateSubscription{UnitAmountInCents: 3500},
+			v:        UpdateSubscription{UnitAmountInCents: NewInt(3500)},
 			expected: "<subscription><unit_amount_in_cents>3500</unit_amount_in_cents></subscription>",
 		},
 		{
