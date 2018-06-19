@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/kmikiy/recurly"
 )
 
@@ -19,7 +18,6 @@ func TestParse_DunningEventNew(t *testing.T) {
 
 	xmlFile := MustOpenFile("testdata/dunning_events/new_dunning_event_notification.xml")
 	result, err := Parse(xmlFile)
-	spew.Dump(result)
 	if err != nil {
 		t.Fatal(err)
 	} else if n, ok := result.(*DunningEventNotificationNew); !ok {
