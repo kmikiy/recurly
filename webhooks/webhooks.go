@@ -247,6 +247,10 @@ func Parse(r io.Reader) (interface{}, error) {
 		dst = &PaymentNotificationVoid{}
 	case PaymentNotificationSuccessfulRefundXMLName:
 		dst = &PaymentNotificationSuccessfulRefund{}
+
+	// Dunning event notifications
+	case DunningEventNotificationNewXMLName:
+		dst = &DunningEventNotificationNew{}
 	default:
 		return nil, ErrUnknownNotification{name: n.XMLName.Local}
 	}
