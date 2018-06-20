@@ -119,6 +119,10 @@ func (c *Client) do(req *http.Request, v interface{}) (*Response, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusNoContent {
+		return nil, nil
+	}
+
 	response := &Response{Response: resp}
 	decoder := xml.NewDecoder(resp.Body)
 	if response.IsError() { // Parse validation errors
