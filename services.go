@@ -86,12 +86,28 @@ type PlansService interface {
 	Delete(code string) (*Response, error)
 }
 
+// PurchasesService represents the interactions available for a purchase
+// involving at least one adjustment or one subscription.
+type PurchasesService interface {
+	Create(p Purchase) (*Response, *InvoiceCollection, error)
+	Preview(p Purchase) (*Response, *InvoiceCollection, error)
+}
+
 // RedemptionsService represents the interactions available for redemptions.
 type RedemptionsService interface {
 	GetForAccount(accountCode string) (*Response, *Redemption, error)
 	GetForInvoice(invoiceNumber string) (*Response, *Redemption, error)
 	Redeem(code string, accountCode string, currency string) (*Response, *Redemption, error)
 	Delete(accountCode string) (*Response, error)
+}
+
+// ShippingAddressesService represents the interactions available for shipping addresses.
+type ShippingAddressesService interface {
+	ListAccount(accountCode string, params Params) (*Response, []ShippingAddress, error)
+	Create(accountCode string, address ShippingAddress) (*Response, *ShippingAddress, error)
+	Update(accountCode string, shippingAddressID int64, address ShippingAddress) (*Response, *ShippingAddress, error)
+	Delete(accountCode string, shippingAddressID int64) (*Response, error)
+	GetSubscriptions(accountCode string, shippingAddressID int64) (*Response, []Subscription, error)
 }
 
 // SubscriptionsService represents the interactinos available for subscriptions.

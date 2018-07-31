@@ -50,6 +50,7 @@ type Subscription struct {
 	Address                Address              `xml:"address,omitempty"`
 	Plan                   NestedPlan           `xml:"plan,omitempty"`
 	AccountCode            string               `xml:"-"`
+	InvoiceNumber          int                  `xml:"-"`
 	RevenueScheduleType    string               `xml:"revenue_schedule_type,omitempty"`
 	UUID                   string               `xml:"uuid,omitempty"`
 	State                  string               `xml:"state,omitempty"`
@@ -126,6 +127,7 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		PendingSubscription    *PendingSubscription `xml:"pending_subscription,omitempty"`
 		CollectionMethod       string               `xml:"collection_method,omitempty"`
 		InvoiceCollection      InvoiceCollection    `xml:"invoice_collection,omitempty"`
+		InvoiceNumber          hrefInt              `xml:"invoice"`
 	}
 	if err := d.DecodeElement(&v, &start); err != nil {
 		return err
@@ -168,6 +170,7 @@ func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 		PendingSubscription:    v.PendingSubscription,
 		CollectionMethod:       v.CollectionMethod,
 		InvoiceCollection:      v.InvoiceCollection,
+		InvoiceNumber:          int(v.InvoiceNumber),
 	}
 
 	return nil
