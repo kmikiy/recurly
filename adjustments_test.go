@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"reflect"
+	"strconv"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 // TestAdjustmentEncoding ensures structs are encoded to XML properly.
@@ -16,27 +18,32 @@ import (
 // fields are handled properly -- including types like booleans and integers which
 // have zero values that we want to send.
 func TestAdjustments_Encoding(t *testing.T) {
+	now := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
 	tests := []struct {
 		v        Adjustment
 		expected string
 	}{
 		// Unit amount in cents and currency are required fields. They should always be present.
-		{v: Adjustment{}, expected: "<adjustment><unit_amount_in_cents>0</unit_amount_in_cents><currency></currency></adjustment>"},
+		{v: Adjustment{}, expected: "<adjustment><unit_amount_in_cents>0</unit_amount_in_cents></adjustment>"},
 		{v: Adjustment{UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency></adjustment>"},
-		{v: Adjustment{Description: "Charge for extra bandwidth", UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><description>Charge for extra bandwidth</description><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency></adjustment>"},
+		{v: Adjustment{Description: "Charge for extra bandwidth", ProductCode: "bandwidth", UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><description>Charge for extra bandwidth</description><product_code>bandwidth</product_code><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency></adjustment>"},
 		{v: Adjustment{Quantity: 1, UnitAmountInCents: 2000, Currency: "CAD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><quantity>1</quantity><currency>CAD</currency></adjustment>"},
 		{v: Adjustment{AccountingCode: "bandwidth", UnitAmountInCents: 2000, Currency: "CAD"}, expected: "<adjustment><accounting_code>bandwidth</accounting_code><unit_amount_in_cents>2000</unit_amount_in_cents><currency>CAD</currency></adjustment>"},
 		{v: Adjustment{TaxExempt: NewBool(false), UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency><tax_exempt>false</tax_exempt></adjustment>"},
 		{v: Adjustment{TaxCode: "digital", UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency><tax_code>digital</tax_code></adjustment>"},
+		{v: Adjustment{StartDate: NullTime{Time: &now}, UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency><start_date>2000-01-01T00:00:00Z</start_date></adjustment>"},
+		{v: Adjustment{StartDate: NullTime{Time: &now}, EndDate: NullTime{Time: &now}, UnitAmountInCents: 2000, Currency: "USD"}, expected: "<adjustment><unit_amount_in_cents>2000</unit_amount_in_cents><currency>USD</currency><start_date>2000-01-01T00:00:00Z</start_date><end_date>2000-01-01T00:00:00Z</end_date></adjustment>"},
 	}
 
-	for _, tt := range tests {
-		var buf bytes.Buffer
-		if err := xml.NewEncoder(&buf).Encode(tt.v); err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		} else if buf.String() != tt.expected {
-			t.Fatalf("unexpected value: %s", buf.String())
-		}
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			var buf bytes.Buffer
+			if err := xml.NewEncoder(&buf).Encode(tt.v); err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			} else if buf.String() != tt.expected {
+				t.Fatalf("unexpected value: %s\nexpected: %s", buf.String(), tt.expected)
+			}
+		})
 	}
 }
 
@@ -91,10 +98,11 @@ func TestAdjustments_List(t *testing.T) {
 	}
 
 	ts, _ := time.Parse(DateTimeFormat, "2011-08-31T03:30:00Z")
-	if !reflect.DeepEqual(adjustments, []Adjustment{
+	if diff := cmp.Diff(adjustments, []Adjustment{
 		{
 			AccountCode:            "100",
 			InvoiceNumber:          1108,
+			SubscriptionUUID:       "17caaca1716f33572edc8146e0aaefde",
 			UUID:                   "626db120a84102b1809909071c701c60",
 			State:                  "invoiced",
 			Description:            "One-time Charged Fee",
@@ -111,8 +119,8 @@ func TestAdjustments_List(t *testing.T) {
 			StartDate:              NewTime(ts),
 			CreatedAt:              NewTime(ts),
 		},
-	}) {
-		t.Fatalf("unexpected adjustments: %v", adjustments)
+	}); diff != "" {
+		t.Fatal(diff)
 	}
 }
 
@@ -129,6 +137,7 @@ func TestAdjustments_Get(t *testing.T) {
 			<adjustment href="https://your-subdomain.recurly.com/v2/adjustments/626db120a84102b1809909071c701c60" type="charge">
 				<account href="https://your-subdomain.recurly.com/v2/accounts/100"/>
 				<invoice href="https://your-subdomain.recurly.com/v2/invoices/1108"/>
+				<subscription href="https://blacklighttest.recurly.com/v2/subscriptions/453f6aa0995e2d52c0d3e6453e9341da"/>
 				<uuid>626db120a84102b1809909071c701c60</uuid>
 				<state>invoiced</state>
 				<description>One-time Charged Fee</description>
@@ -187,9 +196,10 @@ func TestAdjustments_Get(t *testing.T) {
 	}
 
 	ts, _ := time.Parse(DateTimeFormat, "2015-02-04T23:13:07Z")
-	if !reflect.DeepEqual(adjustment, &Adjustment{
+	if diff := cmp.Diff(adjustment, &Adjustment{
 		AccountCode:            "100",
 		InvoiceNumber:          1108,
+		SubscriptionUUID:       "453f6aa0995e2d52c0d3e6453e9341da",
 		UUID:                   "626db120a84102b1809909071c701c60", // UUID has been sanitizzed
 		State:                  "invoiced",
 		Description:            "One-time Charged Fee",
@@ -237,8 +247,8 @@ func TestAdjustments_Get(t *testing.T) {
 		},
 		StartDate: NewTime(ts),
 		CreatedAt: NewTime(ts),
-	}) {
-		t.Fatalf("unexpected adjustment: %v", adjustment)
+	}); diff != "" {
+		t.Fatal(diff)
 	}
 }
 

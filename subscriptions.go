@@ -2,6 +2,7 @@ package recurly
 
 import (
 	"encoding/xml"
+	"sort"
 	"strings"
 )
 
@@ -36,22 +37,18 @@ const (
 	// SubscriptionStatePastDue are subscriptions that are active or canceled
 	// and have a past-due invoice
 	SubscriptionStatePastDue = "past_due"
-)
 
-const (
-	SubscriptionCollectionMethodAutomatic = "automatic"
-
-	SubscriptionCollectionMethodManual = "manual"
+	// SubscriptionStatePaused are subscriptions that are in a paused state
+	// and will not be billed for the set RemainingPauseCycles
+	SubscriptionStatePaused = "paused"
 )
 
 // Subscription represents an individual subscription.
 type Subscription struct {
 	XMLName                xml.Name             `xml:"subscription"`
-	Address                Address              `xml:"address,omitempty"`
 	Plan                   NestedPlan           `xml:"plan,omitempty"`
 	AccountCode            string               `xml:"-"`
 	InvoiceNumber          int                  `xml:"-"`
-	RevenueScheduleType    string               `xml:"revenue_schedule_type,omitempty"`
 	UUID                   string               `xml:"uuid,omitempty"`
 	State                  string               `xml:"state,omitempty"`
 	UnitAmountInCents      int                  `xml:"unit_amount_in_cents,omitempty"`
@@ -61,19 +58,10 @@ type Subscription struct {
 	ActivatedAt            NullTime             `xml:"activated_at,omitempty"`
 	CanceledAt             NullTime             `xml:"canceled_at,omitempty"`
 	ExpiresAt              NullTime             `xml:"expires_at,omitempty"`
-	UpdatedAt              NullTime             `xml:"updated_at,omitempty"`
-	TotalBillingCycles     NullInt              `xml:"total_billing_cycles,omitempty"`
-	RemainingBillingCycles NullInt              `xml:"remaining_billing_cycles,omitempty"`
 	CurrentPeriodStartedAt NullTime             `xml:"current_period_started_at,omitempty"`
 	CurrentPeriodEndsAt    NullTime             `xml:"current_period_ends_at,omitempty"`
 	TrialStartedAt         NullTime             `xml:"trial_started_at,omitempty"`
 	TrialEndsAt            NullTime             `xml:"trial_ends_at,omitempty"`
-	TermsAndConditions     string               `xml:"terms_and_conditions,omitempty"`
-	CustomerNotes          string               `xml:"customer_notes,omitempty"`
-	StartedWithGift        NullBool             `xml:"started_with_gift,omitempty"`
-	ConvertedAt            NullTime             `xml:"converted_at,omitempty"`
-	ImportedTrial          NullBool             `xml:"imported_trial,omitempty"`
-	CostInCents            int                  `xml:"cost_in_cents,omitempty"`
 	TaxInCents             int                  `xml:"tax_in_cents,omitempty"`
 	TaxType                string               `xml:"tax_type,omitempty"`
 	TaxRegion              string               `xml:"tax_region,omitempty"`
@@ -81,96 +69,38 @@ type Subscription struct {
 	PONumber               string               `xml:"po_number,omitempty"`
 	NetTerms               NullInt              `xml:"net_terms,omitempty"`
 	SubscriptionAddOns     []SubscriptionAddOn  `xml:"subscription_add_ons>subscription_add_on,omitempty"`
+	CurrentTermStartedAt   NullTime             `xml:"current_term_started_at,omitempty"`
+	CurrentTermEndsAt      NullTime             `xml:"current_term_ends_at,omitempty"`
 	PendingSubscription    *PendingSubscription `xml:"pending_subscription,omitempty"`
+	Invoice                *Invoice             `xml:"-"`
+	RemainingPauseCycles   int                  `xml:"remaining_pause_cycles,omitempty"`
 	CollectionMethod       string               `xml:"collection_method"`
-	InvoiceCollection      InvoiceCollection    `xml:"invoice_collection,omitempty"`
+	AutoRenew              bool                 `xml:"auto_renew,omitempty"`
+	RenewalBillingCycles   NullInt              `xml:"renewal_billing_cycles"`
+	CustomFields           *CustomFields        `xml:"custom_fields,omitempty"`
 }
 
 // UnmarshalXML unmarshals transactions and handles intermediary state during unmarshaling
 // for types like href.
 func (s *Subscription) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type subscriptionAlias Subscription
 	var v struct {
-		XMLName                xml.Name             `xml:"subscription"`
-		Address                Address              `xml:"address,omitempty"`
-		Plan                   NestedPlan           `xml:"plan,omitempty"`
-		AccountCode            hrefString           `xml:"account"`
-		RevenueScheduleType    string               `xml:"revenue_schedule_type,omitempty"`
-		UUID                   string               `xml:"uuid,omitempty"`
-		State                  string               `xml:"state,omitempty"`
-		UnitAmountInCents      int                  `xml:"unit_amount_in_cents,omitempty"`
-		Currency               string               `xml:"currency,omitempty"`
-		Quantity               int                  `xml:"quantity,omitempty"`
-		TotalAmountInCents     int                  `xml:"total_amount_in_cents,omitempty"`
-		ActivatedAt            NullTime             `xml:"activated_at,omitempty"`
-		CanceledAt             NullTime             `xml:"canceled_at,omitempty"`
-		ExpiresAt              NullTime             `xml:"expires_at,omitempty"`
-		UpdatedAt              NullTime             `xml:"updated_at,omitempty"`
-		TotalBillingCycles     NullInt              `xml:"total_billing_cycles,omitempty"`
-		RemainingBillingCycles NullInt              `xml:"remaining_billing_cycles,omitempty"`
-		CurrentPeriodStartedAt NullTime             `xml:"current_period_started_at,omitempty"`
-		CurrentPeriodEndsAt    NullTime             `xml:"current_period_ends_at,omitempty"`
-		TrialStartedAt         NullTime             `xml:"trial_started_at,omitempty"`
-		TrialEndsAt            NullTime             `xml:"trial_ends_at,omitempty"`
-		TermsAndConditions     string               `xml:"terms_and_conditions,omitempty"`
-		CustomerNotes          string               `xml:"customer_notes,omitempty"`
-		StartedWithGift        NullBool             `xml:"started_with_gift,omitempty"`
-		ConvertedAt            NullTime             `xml:"converted_at,omitempty"`
-		ImportedTrial          NullBool             `xml:"imported_trial,omitempty"`
-		CostInCents            int                  `xml:"cost_in_cents,omitempty"`
-		TaxInCents             int                  `xml:"tax_in_cents,omitempty"`
-		TaxType                string               `xml:"tax_type,omitempty"`
-		TaxRegion              string               `xml:"tax_region,omitempty"`
-		TaxRate                float64              `xml:"tax_rate,omitempty"`
-		PONumber               string               `xml:"po_number,omitempty"`
-		NetTerms               NullInt              `xml:"net_terms,omitempty"`
-		SubscriptionAddOns     []SubscriptionAddOn  `xml:"subscription_add_ons>subscription_add_on,omitempty"`
-		PendingSubscription    *PendingSubscription `xml:"pending_subscription,omitempty"`
-		CollectionMethod       string               `xml:"collection_method,omitempty"`
-		InvoiceCollection      InvoiceCollection    `xml:"invoice_collection,omitempty"`
-		InvoiceNumber          hrefInt              `xml:"invoice"`
+		subscriptionAlias
+		XMLName           xml.Name           `xml:"subscription"`
+		AccountCode       hrefString         `xml:"account"`
+		InvoiceNumber     hrefInt            `xml:"invoice"`
+		InvoiceCollection *InvoiceCollection `xml:"invoice_collection"`
 	}
 	if err := d.DecodeElement(&v, &start); err != nil {
 		return err
 	}
-	*s = Subscription{
-		XMLName:                v.XMLName,
-		Address:                v.Address,
-		Plan:                   v.Plan,
-		AccountCode:            string(v.AccountCode),
-		RevenueScheduleType:    v.RevenueScheduleType,
-		UUID:                   v.UUID,
-		State:                  v.State,
-		UnitAmountInCents:      v.UnitAmountInCents,
-		Currency:               v.Currency,
-		Quantity:               v.Quantity,
-		TotalAmountInCents:     v.TotalAmountInCents,
-		ActivatedAt:            v.ActivatedAt,
-		CanceledAt:             v.CanceledAt,
-		ExpiresAt:              v.ExpiresAt,
-		UpdatedAt:              v.UpdatedAt,
-		TotalBillingCycles:     v.TotalBillingCycles,
-		RemainingBillingCycles: v.RemainingBillingCycles,
-		CurrentPeriodStartedAt: v.CurrentPeriodStartedAt,
-		CurrentPeriodEndsAt:    v.CurrentPeriodEndsAt,
-		TrialStartedAt:         v.TrialStartedAt,
-		TrialEndsAt:            v.TrialEndsAt,
-		TermsAndConditions:     v.TermsAndConditions,
-		CustomerNotes:          v.CustomerNotes,
-		StartedWithGift:        v.StartedWithGift,
-		ConvertedAt:            v.ConvertedAt,
-		ImportedTrial:          v.ImportedTrial,
-		CostInCents:            v.CostInCents,
-		TaxInCents:             v.TaxInCents,
-		TaxType:                v.TaxType,
-		TaxRegion:              v.TaxRegion,
-		TaxRate:                v.TaxRate,
-		PONumber:               v.PONumber,
-		NetTerms:               v.NetTerms,
-		SubscriptionAddOns:     v.SubscriptionAddOns,
-		PendingSubscription:    v.PendingSubscription,
-		CollectionMethod:       v.CollectionMethod,
-		InvoiceCollection:      v.InvoiceCollection,
-		InvoiceNumber:          int(v.InvoiceNumber),
+	*s = Subscription(v.subscriptionAlias)
+	s.XMLName = v.XMLName
+	s.AccountCode = string(v.AccountCode)
+	s.InvoiceNumber = int(v.InvoiceNumber)
+
+	if v.InvoiceCollection != nil {
+		s.Invoice = v.InvoiceCollection.ChargeInvoice
 	}
 
 	return nil
@@ -209,6 +139,7 @@ type SubscriptionAddOn struct {
 type PendingSubscription struct {
 	XMLName            xml.Name            `xml:"pending_subscription"`
 	Plan               NestedPlan          `xml:"plan,omitempty"`
+	UnitAmountInCents  int                 `xml:"unit_amount_in_cents,omitempty"`
 	Quantity           int                 `xml:"quantity,omitempty"` // Quantity of subscriptions
 	SubscriptionAddOns []SubscriptionAddOn `xml:"subscription_add_ons>subscription_add_on,omitempty"`
 }
@@ -220,14 +151,16 @@ type NewSubscription struct {
 	Account                 Account              `xml:"account"`
 	SubscriptionAddOns      *[]SubscriptionAddOn `xml:"subscription_add_ons>subscription_add_on,omitempty"`
 	CouponCode              string               `xml:"coupon_code,omitempty"`
-	UnitAmountInCents       NullInt              `xml:"unit_amount_in_cents,omitempty"`
+	UnitAmountInCents       int                  `xml:"unit_amount_in_cents,omitempty"`
 	Currency                string               `xml:"currency"`
 	Quantity                int                  `xml:"quantity,omitempty"`
 	TrialEndsAt             NullTime             `xml:"trial_ends_at,omitempty"`
 	StartsAt                NullTime             `xml:"starts_at,omitempty"`
 	TotalBillingCycles      int                  `xml:"total_billing_cycles,omitempty"`
+	RenewalBillingCycles    NullInt              `xml:"renewal_billing_cycles"`
 	FirstRenewalDate        NullTime             `xml:"first_renewal_date,omitempty"`
 	CollectionMethod        string               `xml:"collection_method,omitempty"`
+	AutoRenew               bool                 `xml:"auto_renew,omitempty"`
 	NetTerms                NullInt              `xml:"net_terms,omitempty"`
 	PONumber                string               `xml:"po_number,omitempty"`
 	Bulk                    bool                 `xml:"bulk,omitempty"`
@@ -235,6 +168,7 @@ type NewSubscription struct {
 	CustomerNotes           string               `xml:"customer_notes,omitempty"`
 	VATReverseChargeNotes   string               `xml:"vat_reverse_charge_notes,omitempty"`
 	BankAccountAuthorizedAt NullTime             `xml:"bank_account_authorized_at,omitempty"`
+	CustomFields            *CustomFields        `xml:"custom_fields,omitempty"`
 }
 
 // NewSubscriptionResponse is used to unmarshal either the subscription or the transaction.
@@ -245,15 +179,17 @@ type NewSubscriptionResponse struct {
 
 // UpdateSubscription is used to update subscriptions
 type UpdateSubscription struct {
-	XMLName            xml.Name             `xml:"subscription"`
-	Timeframe          string               `xml:"timeframe,omitempty"`
-	PlanCode           string               `xml:"plan_code,omitempty"`
-	Quantity           int                  `xml:"quantity,omitempty"`
-	UnitAmountInCents  NullInt              `xml:"unit_amount_in_cents,omitempty"`
-	CollectionMethod   string               `xml:"collection_method,omitempty"`
-	NetTerms           NullInt              `xml:"net_terms,omitempty"`
-	PONumber           string               `xml:"po_number,omitempty"`
-	SubscriptionAddOns *[]SubscriptionAddOn `xml:"subscription_add_ons>subscription_add_on,omitempty"`
+	XMLName              xml.Name             `xml:"subscription"`
+	Timeframe            string               `xml:"timeframe,omitempty"`
+	PlanCode             string               `xml:"plan_code,omitempty"`
+	Quantity             int                  `xml:"quantity,omitempty"`
+	UnitAmountInCents    int                  `xml:"unit_amount_in_cents,omitempty"`
+	RenewalBillingCycles NullInt              `xml:"renewal_billing_cycles"`
+	CollectionMethod     string               `xml:"collection_method,omitempty"`
+	AutoRenew            bool                 `xml:"auto_renew,omitempty"`
+	NetTerms             NullInt              `xml:"net_terms,omitempty"`
+	PONumber             string               `xml:"po_number,omitempty"`
+	SubscriptionAddOns   *[]SubscriptionAddOn `xml:"subscription_add_ons>subscription_add_on,omitempty"`
 }
 
 // SubscriptionNotes is used to update a subscription's notes.
@@ -262,4 +198,62 @@ type SubscriptionNotes struct {
 	TermsAndConditions    string   `xml:"terms_and_conditions,omitempty"`
 	CustomerNotes         string   `xml:"customer_notes,omitempty"`
 	VATReverseChargeNotes string   `xml:"vat_reverse_charge_notes,omitempty"`
+}
+
+// CustomFields represents custom key value pairs.
+// Note that custom fields must be enabled on your Recurly site and must be added in
+// the dashboard before they can be used.
+type CustomFields map[string]string
+
+// UnmarshalXML unmarshals custom_fields.
+func (c *CustomFields) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var v struct {
+		XMLName xml.Name `xml:"custom_fields"`
+		Fields  []struct {
+			Name  string `xml:"name"`
+			Value string `xml:"value"`
+		} `xml:"custom_field"`
+	}
+	if err := d.DecodeElement(&v, &start); err != nil {
+		return err
+	}
+	m := make(map[string]string, len(v.Fields))
+	for _, f := range v.Fields {
+		m[f.Name] = f.Value
+	}
+	*c = m
+
+	return nil
+}
+
+//MarshalXML marshals custom_fields.
+func (c CustomFields) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	if len(c) == 0 {
+		return nil
+	}
+
+	type xmlMapEntry struct {
+		XMLName struct{} `xml:"custom_field"`
+		Name    string   `xml:"name"`
+		Value   string   `xml:"value"`
+	}
+
+	e.EncodeToken(xml.StartElement{Name: xml.Name{Local: "custom_fields"}})
+
+	// Ensure key field order, otherwise causes rendered xml can have order difference
+	var keys []string
+	for k := range c {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		n := &xmlMapEntry{
+			Name:  k,
+			Value: c[k],
+		}
+		e.Encode(n)
+	}
+	e.EncodeToken(xml.EndElement{Name: xml.Name{Local: "custom_fields"}})
+	return nil
 }

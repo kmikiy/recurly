@@ -38,9 +38,9 @@ type Client struct {
 	AddOns            AddOnsService
 	Subscriptions     SubscriptionsService
 	Transactions      TransactionsService
-	AutomatedExports  AutomatedExportsService
 	Purchases         PurchasesService
 	ShippingAddresses ShippingAddressesService
+	CreditPayments    CreditPaymentsService
 }
 
 // NewClient returns a new instance of *Client.
@@ -57,19 +57,19 @@ func NewClient(subDomain, apiKey string, httpClient *http.Client) *Client {
 		BaseURL:   fmt.Sprintf(defaultBaseURL, subDomain),
 	}
 
-	client.Accounts = NewAccountsImpl(client)
-	client.Adjustments = NewAdjustmentsImpl(client)
-	client.Billing = NewBillingImpl(client)
-	client.Coupons = NewCouponsImpl(client)
-	client.Redemptions = NewRedemptionsImpl(client)
-	client.Invoices = NewInvoicesImpl(client)
-	client.Plans = NewPlansImpl(client)
-	client.AddOns = NewAddOnsImpl(client)
-	client.Subscriptions = NewSubscriptionsImpl(client)
-	client.Transactions = NewTransactionsImpl(client)
-	client.AutomatedExports = NewAutomatedExportsImpl(client)
-	client.Purchases = NewPurchasesImpl(client)
-	client.ShippingAddresses = NewShippingAddressesImpl(client)
+	client.Accounts = &accountsImpl{client: client}
+	client.Adjustments = &adjustmentsImpl{client: client}
+	client.Billing = &billingImpl{client: client}
+	client.Coupons = &couponsImpl{client: client}
+	client.Redemptions = &redemptionsImpl{client: client}
+	client.Invoices = &invoicesImpl{client: client}
+	client.Plans = &plansImpl{client: client}
+	client.AddOns = &addOnsImpl{client: client}
+	client.Subscriptions = &subscriptionsImpl{client: client}
+	client.ShippingAddresses = &shippingAddressesImpl{client: client}
+	client.Transactions = &transactionsImpl{client: client}
+	client.CreditPayments = &creditInvoicesImpl{client: client}
+	client.Purchases = &purchasesImpl{client: client}
 
 	return client
 }

@@ -10,10 +10,6 @@ type purchasesImpl struct {
 	client *Client
 }
 
-func NewPurchasesImpl(client *Client) *purchasesImpl {
-	return &purchasesImpl{client: client}
-}
-
 func (s *purchasesImpl) Create(p Purchase) (*Response, *InvoiceCollection, error) {
 	req, err := s.client.newRequest("POST", "purchases", nil, p)
 	if err != nil {

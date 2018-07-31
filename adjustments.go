@@ -49,7 +49,7 @@ func (a Adjustment) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		ProductCode       string   `xml:"product_code,omitempty"`
 		UnitAmountInCents int      `xml:"unit_amount_in_cents"`
 		Quantity          int      `xml:"quantity,omitempty"`
-		Currency          string   `xml:"currency"` // Required for some operations
+		Currency          string   `xml:"currency,omitempty"` // Required for some operations
 		TaxCode           string   `xml:"tax_code,omitempty"`
 		TaxExempt         NullBool `xml:"tax_exempt,omitempty"`
 		StartDate         NullTime `xml:"start_date,omitempty"`
@@ -90,7 +90,7 @@ func (a *Adjustment) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 		DiscountInCents        int         `xml:"discount_in_cents,omitempty"`
 		TaxInCents             int         `xml:"tax_in_cents,omitempty"`
 		TotalInCents           int         `xml:"total_in_cents,omitempty"`
-		Currency               string      `xml:"currency"`
+		Currency               string      `xml:"currency,omitempty"`
 		Taxable                NullBool    `xml:"taxable,omitempty"`
 		TaxCode                string      `xml:"tax_code,omitempty"`
 		TaxType                string      `xml:"tax_type,omitempty"`

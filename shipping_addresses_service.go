@@ -13,10 +13,6 @@ type shippingAddressesImpl struct {
 	client *Client
 }
 
-func NewShippingAddressesImpl(client *Client) *shippingAddressesImpl {
-	return &shippingAddressesImpl{client: client}
-}
-
 // ListAccount returns a list of all shipping addresses associated with an account.
 func (s *shippingAddressesImpl) ListAccount(accountCode string, params Params) (*Response, []ShippingAddress, error) {
 	action := fmt.Sprintf("accounts/%s/shipping_addresses", accountCode)

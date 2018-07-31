@@ -15,11 +15,6 @@ type subscriptionsImpl struct {
 	client *Client
 }
 
-// NewSubscriptionsImpl returns a new instance of subscriptionsImpl.
-func NewSubscriptionsImpl(client *Client) *subscriptionsImpl {
-	return &subscriptionsImpl{client: client}
-}
-
 // List returns a list of all the subscriptions.
 // https://docs.recurly.com/api/subscriptions#list-subscriptions
 func (s *subscriptionsImpl) List(params Params) (*Response, []Subscription, error) {
@@ -196,7 +191,7 @@ func (s *subscriptionsImpl) Reactivate(uuid string) (*Response, *Subscription, e
 // https://docs.recurly.com/api/subscriptions#terminate-subscription
 func (s *subscriptionsImpl) TerminateWithPartialRefund(uuid string) (*Response, *Subscription, error) {
 	action := fmt.Sprintf("subscriptions/%s/terminate", SanitizeUUID(uuid))
-	req, err := s.client.newRequest("PUT", action, Params{"refund": "partial"}, nil)
+	req, err := s.client.newRequest("PUT", action, Params{"refund_type": "partial"}, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -212,7 +207,7 @@ func (s *subscriptionsImpl) TerminateWithPartialRefund(uuid string) (*Response, 
 // https://docs.recurly.com/api/subscriptions#terminate-subscription
 func (s *subscriptionsImpl) TerminateWithFullRefund(uuid string) (*Response, *Subscription, error) {
 	action := fmt.Sprintf("subscriptions/%s/terminate", SanitizeUUID(uuid))
-	req, err := s.client.newRequest("PUT", action, Params{"refund": "full"}, nil)
+	req, err := s.client.newRequest("PUT", action, Params{"refund_type": "full"}, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -228,7 +223,7 @@ func (s *subscriptionsImpl) TerminateWithFullRefund(uuid string) (*Response, *Su
 // https://docs.recurly.com/api/subscriptions#terminate-subscription
 func (s *subscriptionsImpl) TerminateWithoutRefund(uuid string) (*Response, *Subscription, error) {
 	action := fmt.Sprintf("subscriptions/%s/terminate", SanitizeUUID(uuid))
-	req, err := s.client.newRequest("PUT", action, Params{"refund": "none"}, nil)
+	req, err := s.client.newRequest("PUT", action, Params{"refund_type": "none"}, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -252,6 +247,33 @@ func (s *subscriptionsImpl) Postpone(uuid string, dt time.Time, bulk bool) (*Res
 	if err != nil {
 		return nil, nil, err
 	}
+
+	var dst Subscription
+	resp, err := s.client.do(req, &dst)
+
+	return resp, &dst, err
+}
+
+// Pause will pause an active subscription for the specified number of billing cycles.
+// The pause takes effect at the beginning of the next billing cycle.
+func (s *subscriptionsImpl) Pause(uuid string, cycles int) (*Response, *Subscription, error) {
+	action := fmt.Sprintf("subscriptions/%s/pause", SanitizeUUID(uuid))
+	type subscription struct {
+		RemainingPauseCycles int `xml:"remaining_pause_cycles"`
+	}
+	pauseCycles := subscription{cycles}
+	req, err := s.client.newRequest("PUT", action, nil, pauseCycles)
+
+	var dst Subscription
+	resp, err := s.client.do(req, &dst)
+
+	return resp, &dst, err
+}
+
+// Resume will immediately resume a paused subscription.
+func (s *subscriptionsImpl) Resume(uuid string) (*Response, *Subscription, error) {
+	action := fmt.Sprintf("subscriptions/%s/resume", SanitizeUUID(uuid))
+	req, err := s.client.newRequest("PUT", action, nil, nil)
 
 	var dst Subscription
 	resp, err := s.client.do(req, &dst)
