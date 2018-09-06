@@ -947,6 +947,7 @@ func TestSubscriptions_Preview(t *testing.T) {
 		}
 		w.WriteHeader(201)
 		fmt.Fprint(w, `<?xml version="1.0" encoding="UTF-8"?><subscription>
+			<cost_in_cents>5000</cost_in_cents>
 			<invoice_collection>
 				<charge_invoice href="">
 				<account href="https://your-subdomain.recurly.com/v2/accounts/1"/>
@@ -965,7 +966,8 @@ func TestSubscriptions_Preview(t *testing.T) {
 	} else if r.IsError() {
 		t.Fatal("expected preview subscription to return OK")
 	} else if diff := cmp.Diff(sub, &Subscription{
-		XMLName: xml.Name{Local: "subscription"},
+		XMLName:     xml.Name{Local: "subscription"},
+		CostInCents: 5000,
 		Invoice: &Invoice{
 			XMLName:     xml.Name{Local: "invoice"},
 			AccountCode: "1",
