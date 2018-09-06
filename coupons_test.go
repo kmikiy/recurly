@@ -35,12 +35,12 @@ func TestCoupons_Encoding(t *testing.T) {
 		},
 		{
 			v: Coupon{
-				Code:              "special",
-				Name:              "Special 10% off",
-				HostedDescription: "Save 10%",
-				DiscountType:      "percent",
+				Code:         "special",
+				Name:         "Special 10% off",
+				Description:  "Save 10%",
+				DiscountType: "percent",
 			},
-			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><hosted_description>Save 10%</hosted_description><discount_type>percent</discount_type></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><description>Save 10%</description><discount_type>percent</discount_type></coupon>",
 		},
 		{
 			v: Coupon{
@@ -49,7 +49,7 @@ func TestCoupons_Encoding(t *testing.T) {
 				InvoiceDescription: "Coupon: Special 10% off",
 				DiscountType:       "percent",
 			},
-			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><invoice_description>Coupon: Special 10% off</invoice_description><discount_type>percent</discount_type></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><invoice_description>Coupon: Special 10% off</invoice_description></coupon>",
 		},
 		{
 			v: Coupon{
@@ -65,18 +65,19 @@ func TestCoupons_Encoding(t *testing.T) {
 				Code:         "special",
 				Name:         "Special 10% off",
 				DiscountType: "percent",
-				SingleUse:    NewBool(true),
+				Duration:     "single_use",
 			},
-			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><single_use>true</single_use></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><duration>single_use</duration></coupon>",
 		},
 		{
 			v: Coupon{
-				Code:             "special",
-				Name:             "Special 10% off",
-				DiscountType:     "percent",
-				AppliesForMonths: NewInt(3),
+				Code:           "special",
+				Name:           "Special 10% off",
+				DiscountType:   "percent",
+				TemporalUnit:   "month",
+				TemporalAmount: NewInt(3),
 			},
-			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><applies_for_months>3</applies_for_months></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><temporal_unit>month</temporal_unit><temporal_amount>3</temporal_amount></coupon>",
 		},
 		{
 			v: Coupon{
@@ -158,7 +159,7 @@ func TestCoupons_List(t *testing.T) {
         		<discount_type>percent</discount_type>
         		<discount_percent type="integer">10</discount_percent>
         		<redeem_by_date type="datetime">2014-01-01T07:00:00Z</redeem_by_date>
-        		<single_use type="boolean">true</single_use>
+        		<duration>single_use</duration>
         		<applies_for_months nil="nil"></applies_for_months>
         		<max_redemptions type="integer">10</max_redemptions>
         		<applies_to_all_plans type="boolean">false</applies_to_all_plans>
@@ -192,7 +193,7 @@ func TestCoupons_List(t *testing.T) {
 			DiscountType:      "percent",
 			DiscountPercent:   10,
 			RedeemByDate:      NewTime(redeem),
-			SingleUse:         NewBool(true),
+			Duration:          "single_use",
 			MaxRedemptions:    NewInt(10),
 			AppliesToAllPlans: NewBool(false),
 			CreatedAt:         NewTime(ts),
@@ -224,7 +225,7 @@ func TestCoupons_Get(t *testing.T) {
         		<discount_type>percent</discount_type>
         		<discount_percent type="integer">10</discount_percent>
         		<redeem_by_date type="datetime">2014-01-01T07:00:00Z</redeem_by_date>
-        		<single_use type="boolean">true</single_use>
+        		<duration>single_use</duration>
         		<applies_for_months nil="nil"></applies_for_months>
         		<max_redemptions type="integer">10</max_redemptions>
         		<applies_to_all_plans type="boolean">false</applies_to_all_plans>
@@ -254,7 +255,7 @@ func TestCoupons_Get(t *testing.T) {
 		DiscountType:      "percent",
 		DiscountPercent:   10,
 		RedeemByDate:      NewTime(redeem),
-		SingleUse:         NewBool(true),
+		Duration:          "single_use",
 		MaxRedemptions:    NewInt(10),
 		AppliesToAllPlans: NewBool(false),
 		CreatedAt:         NewTime(ts),
