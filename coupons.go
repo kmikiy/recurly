@@ -9,7 +9,7 @@ type Coupon struct {
 	Name                     string            `xml:"name"`
 	Description              string            `xml:"description,omitempty"`
 	DiscountType             string            `xml:"discount_type"`
-	DiscountInCents          DiscountInCents   `xml:"discount_in_cents>USD,omitempty"`
+	DiscountInCents          *DiscountInCents  `xml:"discount_in_cents,omitempty"`
 	DiscountPercent          int               `xml:"discount_percent,omitempty"`
 	InvoiceDescription       string            `xml:"invoice_description,omitempty"`
 	RedeemByDate             NullTime          `xml:"redeem_by_date,omitempty"`
@@ -40,5 +40,5 @@ type CouponPlanCode struct {
 }
 
 type DiscountInCents struct {
-	USD int `xml:",innerxml"`
+	USD int `xml:"USD,omitempty"`
 }
