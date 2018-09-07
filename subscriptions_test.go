@@ -266,8 +266,8 @@ func TestSubscriptions_NewSubscription_Encoding(t *testing.T) {
 		var given bytes.Buffer
 		if err := xml.NewEncoder(&given).Encode(tt.v); err != nil {
 			t.Fatalf("(%d) unexpected encode error: %v", i, err)
-		} else if diff := cmp.Diff(tt.expected, given.String()); diff != "" {
-			t.Fatal(diff)
+		} else if tt.expected != given.String() {
+			t.Fatalf("(%d) unexpected value: %s", i, cmp.Diff(given.String(), tt.expected))
 		}
 	}
 }
