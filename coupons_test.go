@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 	"testing"
 	"time"
-
-	"github.com/google/go-cmp/cmp"
 )
 
 // TestCouponsEncoding ensures structs are encoded to XML properly.
@@ -23,80 +22,111 @@ func TestCoupons_Encoding(t *testing.T) {
 		expected string
 	}{
 		{
-			v:        Coupon{XMLName: xml.Name{Local: "coupon"}},
-			expected: "<coupon><id>0</id><coupon_code></coupon_code><coupon_type></coupon_type><name></name><redemption_resource></redemption_resource><state></state><single_use>false</single_use><applies_to_all_plans>false</applies_to_all_plans><duration></duration><discount_type></discount_type><applies_to_non_plan_charges>false</applies_to_non_plan_charges><plan_codes></plan_codes></coupon>",
+			v:        Coupon{},
+			expected: "<coupon><coupon_code></coupon_code><name></name><discount_type></discount_type><plan_codes></plan_codes></coupon>",
 		},
 		{
 			v: Coupon{
-				XMLName:      xml.Name{Local: "coupon"},
 				Code:         "special",
 				Name:         "Special 10% off",
 				DiscountType: "percent",
 			},
-			expected: "<coupon><id>0</id><coupon_code>special</coupon_code><coupon_type></coupon_type><name>Special 10% off</name><redemption_resource></redemption_resource><state></state><single_use>false</single_use><applies_to_all_plans>false</applies_to_all_plans><duration></duration><discount_type>percent</discount_type><applies_to_non_plan_charges>false</applies_to_non_plan_charges><plan_codes></plan_codes></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><plan_codes></plan_codes></coupon>",
 		},
 		{
 			v: Coupon{
-				XMLName:            xml.Name{Local: "coupon"},
+				Code:         "special",
+				Name:         "Special 10% off",
+				Description:  "Save 10%",
+				DiscountType: "percent",
+			},
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><description>Save 10%</description><discount_type>percent</discount_type><plan_codes></plan_codes></coupon>",
+		},
+		{
+			v: Coupon{
 				Code:               "special",
 				Name:               "Special 10% off",
-				State:              "redeemable",
-				RedemptionResource: "account",
-				Description:        "Save 10%",
+				InvoiceDescription: "Coupon: Special 10% off",
 				DiscountType:       "percent",
 			},
-			expected: "<coupon><id>0</id><coupon_code>special</coupon_code><coupon_type></coupon_type><name>Special 10% off</name><redemption_resource>account</redemption_resource><state>redeemable</state><single_use>false</single_use><applies_to_all_plans>false</applies_to_all_plans><duration></duration><discount_type>percent</discount_type><applies_to_non_plan_charges>false</applies_to_non_plan_charges><description>Save 10%</description><plan_codes></plan_codes></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><invoice_description>Coupon: Special 10% off</invoice_description><plan_codes></plan_codes></coupon>",
 		},
 		{
 			v: Coupon{
-				XMLName:            xml.Name{Local: "coupon"},
-				Code:               "special",
-				Name:               "Special 10% off",
-				State:              "redeemable",
-				RedemptionResource: "account",
-				Description:        "Save 10%",
-				DiscountType:       "percent",
-				SingleUse:          true,
-				AppliesToAllPlans:  true,
-				DiscountPercent:    NewInt(10),
+				Code:         "special",
+				Name:         "Special 10% off",
+				DiscountType: "percent",
+				RedeemByDate: NewTime(redeem),
 			},
-			expected: "<coupon><id>0</id><coupon_code>special</coupon_code><coupon_type></coupon_type><name>Special 10% off</name><redemption_resource>account</redemption_resource><state>redeemable</state><single_use>true</single_use><applies_to_all_plans>true</applies_to_all_plans><duration></duration><discount_type>percent</discount_type><applies_to_non_plan_charges>false</applies_to_non_plan_charges><description>Save 10%</description><discount_percent>10</discount_percent><plan_codes></plan_codes></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><redeem_by_date>2014-01-01T07:00:00Z</redeem_by_date><plan_codes></plan_codes></coupon>",
 		},
 		{
 			v: Coupon{
-				XMLName:                  xml.Name{Local: "coupon"},
-				Code:                     "special",
-				Type:                     "single_code",
-				Name:                     "Special 10% off",
-				DiscountType:             "dollars",
-				DiscountInCents:          &UnitAmount{USD: 100},
-				MaxRedemptions:           NewInt(2),
-				MaxRedemptionsPerAccount: NewInt(1),
+				Code:         "special",
+				Name:         "Special 10% off",
+				DiscountType: "percent",
+				Duration:     "single_use",
 			},
-			expected: "<coupon><id>0</id><coupon_code>special</coupon_code><coupon_type>single_code</coupon_type><name>Special 10% off</name><redemption_resource></redemption_resource><state></state><single_use>false</single_use><applies_to_all_plans>false</applies_to_all_plans><duration></duration><discount_type>dollars</discount_type><applies_to_non_plan_charges>false</applies_to_non_plan_charges><discount_in_cents><USD>100</USD></discount_in_cents><max_redemptions>2</max_redemptions><max_redemptions_per_account>1</max_redemptions_per_account><plan_codes></plan_codes></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><duration>single_use</duration><plan_codes></plan_codes></coupon>",
 		},
 		{
 			v: Coupon{
-				XMLName:        xml.Name{Local: "coupon"},
 				Code:           "special",
 				Name:           "Special 10% off",
-				Duration:       "temporal",
-				TemporalUnit:   "day",
-				TemporalAmount: NewInt(28),
+				DiscountType:   "percent",
+				TemporalUnit:   "month",
+				TemporalAmount: NewInt(3),
 			},
-			expected: "<coupon><id>0</id><coupon_code>special</coupon_code><coupon_type></coupon_type><name>Special 10% off</name><redemption_resource></redemption_resource><state></state><single_use>false</single_use><applies_to_all_plans>false</applies_to_all_plans><duration>temporal</duration><discount_type></discount_type><applies_to_non_plan_charges>false</applies_to_non_plan_charges><temporal_unit>day</temporal_unit><temporal_amount>28</temporal_amount><plan_codes></plan_codes></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><temporal_unit>month</temporal_unit><temporal_amount>3</temporal_amount><plan_codes></plan_codes></coupon>",
 		},
 		{
 			v: Coupon{
-				XMLName:           xml.Name{Local: "coupon"},
+				Code:           "special",
+				Name:           "Special 10% off",
+				DiscountType:   "percent",
+				MaxRedemptions: NewInt(20),
+			},
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><max_redemptions>20</max_redemptions><plan_codes></plan_codes></coupon>",
+		},
+		{
+			v: Coupon{
 				Code:              "special",
 				Name:              "Special 10% off",
 				DiscountType:      "percent",
-				AppliesToAllPlans: true,
-				RedeemByDate:      NewTime(redeem),
-				PlanCodes:         []string{"gold", "silver"},
+				AppliesToAllPlans: NewBool(false),
 			},
-			expected: "<coupon><id>0</id><coupon_code>special</coupon_code><coupon_type></coupon_type><name>Special 10% off</name><redemption_resource></redemption_resource><state></state><single_use>false</single_use><applies_to_all_plans>true</applies_to_all_plans><duration></duration><discount_type>percent</discount_type><applies_to_non_plan_charges>false</applies_to_non_plan_charges><redeem_by_date>2014-01-01T07:00:00Z</redeem_by_date><plan_codes><plan_code>gold</plan_code><plan_code>silver</plan_code></plan_codes></coupon>",
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><applies_to_all_plans>false</applies_to_all_plans><plan_codes></plan_codes></coupon>",
+		},
+		{
+			v: Coupon{
+				Code:            "special",
+				Name:            "Special 10% off",
+				DiscountType:    "percent",
+				DiscountPercent: 10,
+			},
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><discount_percent>10</discount_percent><plan_codes></plan_codes></coupon>",
+		},
+		{
+			v: Coupon{
+				Code:            "special",
+				Name:            "Special $10 off",
+				DiscountType:    "dollars",
+				DiscountPercent: 1000,
+			},
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special $10 off</name><discount_type>dollars</discount_type><discount_percent>1000</discount_percent><plan_codes></plan_codes></coupon>",
+		},
+		{
+			v: Coupon{
+				Code:              "special",
+				Name:              "Special 10% off",
+				DiscountType:      "percent",
+				AppliesToAllPlans: NewBool(false),
+				PlanCodes: []string{
+					"gold",
+					"silver",
+				},
+			},
+			expected: "<coupon><coupon_code>special</coupon_code><name>Special 10% off</name><discount_type>percent</discount_type><applies_to_all_plans>false</applies_to_all_plans><plan_codes><plan_code>gold</plan_code><plan_code>silver</plan_code></plan_codes></coupon>",
 		},
 	}
 
@@ -105,16 +135,7 @@ func TestCoupons_Encoding(t *testing.T) {
 		if err := xml.NewEncoder(&buf).Encode(tt.v); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		} else if buf.String() != tt.expected {
-			t.Fatalf("unexpected coupon: %v", cmp.Diff(buf.String(), tt.expected))
-		}
-	}
-
-	for _, tt := range tests {
-		c := Coupon{}
-		if err := xml.Unmarshal([]byte(tt.expected), &c); err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		} else if diff := cmp.Diff(tt.v, c); diff != "" {
-			t.Fatalf("unexpected decode diff: %v", diff)
+			t.Fatalf("unexpected coupon: %v", buf.String())
 		}
 	}
 }
@@ -130,35 +151,25 @@ func TestCoupons_List(t *testing.T) {
 		w.WriteHeader(200)
 		io.WriteString(w, `<?xml version="1.0" encoding="UTF-8"?>
         <coupons type="array">
-          <coupon href="https://your-subdomain.recurly.com/v2/coupons/special">
-            <redemptions href="https://your-subdomain.recurly.com/v2/coupons/special/redemptions"/>
-            <id type="integer">2151093486799579392</id>
-            <coupon_code>special</coupon_code>
-            <coupon_type>single_code</coupon_type>
-            <name>Special 10% off</name>
-            <state>redeemable</state>
-            <single_use>true</single_use>
-            <discount_type>percent</discount_type>
-            <max_redemptions type="integer">200</max_redemptions>
-            <applies_to_all_plans>false</applies_to_all_plans>
-            <discount_percent type="integer">10</discount_percent>
-            <redeem_by_date type="datetime">2014-01-01T07:00:00Z</redeem_by_date>
-            <single_use type="boolean">true</single_use>
-            <applies_for_months nil="nil"></applies_for_months>
-            <max_redemptions type="integer">10</max_redemptions>
-            <applies_to_all_plans type="boolean">false</applies_to_all_plans>
-            <duration>single_use</duration>
-            <temporal_unit nil="nil"/>
-            <temporal_amount nil="nil"/>
-            <redemption_resource>account</redemption_resource>
-            <max_redemptions_per_account nil="nil"/>
-            <created_at type="datetime">2011-04-10T07:00:00Z</created_at>
-            <plan_codes type="array">
-              <plan_code>gold</plan_code>
-              <plan_code>platinum</plan_code>
-            </plan_codes>
-            <a name="redeem" href="https://your-subdomain.recurly.com/v2/coupons/special/redeem" method="post"/>
-          </coupon>
+        	<coupon href="https://your-subdomain.recurly.com/v2/coupons/special">
+        		<redemptions href="https://your-subdomain.recurly.com/v2/coupons/special/redemptions"/>
+        		<coupon_code>special</coupon_code>
+        		<name>Special 10% off</name>
+        		<state>redeemable</state>
+        		<discount_type>percent</discount_type>
+        		<discount_percent type="integer">10</discount_percent>
+        		<redeem_by_date type="datetime">2014-01-01T07:00:00Z</redeem_by_date>
+        		<duration>single_use</duration>
+        		<applies_for_months nil="nil"></applies_for_months>
+        		<max_redemptions type="integer">10</max_redemptions>
+        		<applies_to_all_plans type="boolean">false</applies_to_all_plans>
+        		<created_at type="datetime">2011-04-10T07:00:00Z</created_at>
+        		<plan_codes type="array">
+        			<plan_code>gold</plan_code>
+        			<plan_code>platinum</plan_code>
+        		</plan_codes>
+        		<a name="redeem" href="https://your-subdomain.recurly.com/v2/coupons/special/redeem" method="post"/>
+        	</coupon>
         </coupons>`)
 	})
 
@@ -173,27 +184,26 @@ func TestCoupons_List(t *testing.T) {
 
 	ts, _ := time.Parse(DateTimeFormat, "2011-04-10T07:00:00Z")
 	redeem, _ := time.Parse(DateTimeFormat, "2014-01-01T07:00:00Z")
-	if diff := cmp.Diff(coupons, []Coupon{
+	if !reflect.DeepEqual(coupons, []Coupon{
 		{
-			XMLName:            xml.Name{Local: "coupon"},
-			ID:                 2151093486799579392,
-			Code:               "special",
-			Name:               "Special 10% off",
-			Type:               "single_code",
-			State:              "redeemable",
-			RedemptionResource: "account",
-			DiscountType:       "percent",
-			DiscountPercent:    NewInt(10),
-			RedeemByDate:       NewTime(redeem),
-			SingleUse:          true,
-			Duration:           "single_use",
-			MaxRedemptions:     NewInt(10),
-			AppliesToAllPlans:  false,
-			CreatedAt:          NewTime(ts),
-			PlanCodes:          []string{"gold", "platinum"},
+			XMLName:           xml.Name{Local: "coupon"},
+			Code:              "special",
+			Name:              "Special 10% off",
+			State:             "redeemable",
+			DiscountType:      "percent",
+			DiscountPercent:   10,
+			RedeemByDate:      NewTime(redeem),
+			Duration:          "single_use",
+			MaxRedemptions:    NewInt(10),
+			AppliesToAllPlans: NewBool(false),
+			CreatedAt:         NewTime(ts),
+			PlanCodes: []string{
+				"gold",
+				"platinum",
+			},
 		},
-	}); diff != "" {
-		t.Fatal(diff)
+	}) {
+		t.Fatalf("unexpected coupons: %v", coupons)
 	}
 }
 
@@ -206,33 +216,26 @@ func TestCoupons_Get(t *testing.T) {
 			t.Fatalf("unexpected method: %s", r.Method)
 		}
 		w.WriteHeader(200)
-		io.WriteString(w, `<?xml version="1.0" encoding="UTF-8"?>             
+		io.WriteString(w, `<?xml version="1.0" encoding="UTF-8"?>
             <coupon href="https://your-subdomain.recurly.com/v2/coupons/special">
-             	<redemptions href="https://your-subdomain.recurly.com/v2/coupons/special/redemptions"/>
-             	<id type="integer">2151093486799579392</id>
-             	<coupon_code>special</coupon_code>
-             	<name>20$ off</name>
-             	<state>redeemable</state>
-             	<coupon_type>bulk</coupon_type>
-             	<discount_type>dollars</discount_type>
-             	<discount_in_cents>
-             	  <USD type="integer">2000</USD>
-             	</discount_in_cents>
-             	<redemption_resource>account</redemption_resource>
-             	<unique_code_template>'savemore'99999999</unique_code_template>
-             	<redeem_by_date type="datetime">2014-01-01T07:00:00Z</redeem_by_date>
-             	<max_redemptions_per_account type="integer">1</max_redemptions_per_account>
-             	<single_use type="boolean">true</single_use>
-             	<applies_for_months nil="nil"></applies_for_months>
-             	<max_redemptions type="integer">10</max_redemptions>
-              <applies_to_all_plans type="boolean">false</applies_to_all_plans>
-             	<created_at type="datetime">2011-04-10T07:00:00Z</created_at>
-             	<plan_codes type="array">
-             	  <plan_code>gold</plan_code>
-             	  <plan_code>platinum</plan_code>
-             	</plan_codes>
-             	<a name="redeem" href="https://your-subdomain.recurly.com/v2/coupons/special/redeem" method="post"/>
-            </coupon>`)
+        		<redemptions href="https://your-subdomain.recurly.com/v2/coupons/special/redemptions"/>
+        		<coupon_code>special</coupon_code>
+        		<name>Special 10% off</name>
+        		<state>redeemable</state>
+        		<discount_type>percent</discount_type>
+        		<discount_percent type="integer">10</discount_percent>
+        		<redeem_by_date type="datetime">2014-01-01T07:00:00Z</redeem_by_date>
+        		<duration>single_use</duration>
+        		<applies_for_months nil="nil"></applies_for_months>
+        		<max_redemptions type="integer">10</max_redemptions>
+        		<applies_to_all_plans type="boolean">false</applies_to_all_plans>
+        		<created_at type="datetime">2011-04-10T07:00:00Z</created_at>
+        		<plan_codes type="array">
+        			<plan_code>gold</plan_code>
+        			<plan_code>platinum</plan_code>
+        		</plan_codes>
+        		<a name="redeem" href="https://your-subdomain.recurly.com/v2/coupons/special/redeem" method="post"/>
+        	</coupon>`)
 	})
 
 	resp, coupon, err := client.Coupons.Get("special")
@@ -244,26 +247,24 @@ func TestCoupons_Get(t *testing.T) {
 
 	ts, _ := time.Parse(DateTimeFormat, "2011-04-10T07:00:00Z")
 	redeem, _ := time.Parse(DateTimeFormat, "2014-01-01T07:00:00Z")
-	if diff := cmp.Diff(coupon, &Coupon{
-		XMLName:                  xml.Name{Local: "coupon"},
-		ID:                       2151093486799579392,
-		Code:                     "special",
-		Name:                     "20$ off",
-		State:                    "redeemable",
-		Type:                     "bulk",
-		DiscountType:             "dollars",
-		DiscountInCents:          &UnitAmount{USD: 2000},
-		RedeemByDate:             NewTime(redeem),
-		SingleUse:                true,
-		RedemptionResource:       "account",
-		MaxRedemptions:           NewInt(10),
-		MaxRedemptionsPerAccount: NewInt(1),
-		AppliesToAllPlans:        false,
-		UniqueCodeTemplate:       "'savemore'99999999",
-		CreatedAt:                NewTime(ts),
-		PlanCodes:                []string{"gold", "platinum"},
-	}); diff != "" {
-		t.Fatal(diff)
+	if !reflect.DeepEqual(coupon, &Coupon{
+		XMLName:           xml.Name{Local: "coupon"},
+		Code:              "special",
+		Name:              "Special 10% off",
+		State:             "redeemable",
+		DiscountType:      "percent",
+		DiscountPercent:   10,
+		RedeemByDate:      NewTime(redeem),
+		Duration:          "single_use",
+		MaxRedemptions:    NewInt(10),
+		AppliesToAllPlans: NewBool(false),
+		CreatedAt:         NewTime(ts),
+		PlanCodes: []string{
+			"gold",
+			"platinum",
+		},
+	}) {
+		t.Fatalf("unexpected coupon: %v", coupon)
 	}
 }
 
