@@ -3,42 +3,33 @@ package recurly
 import "encoding/xml"
 
 // Coupon represents an individual coupon on your site.
+
 type Coupon struct {
 	XMLName                  xml.Name    `xml:"coupon"`
-	ID                       uint64      `xml:"id"`
 	Code                     string      `xml:"coupon_code"`
-	Type                     string      `xml:"coupon_type"`
 	Name                     string      `xml:"name"`
-	RedemptionResource       string      `xml:"redemption_resource"`
-	State                    string      `xml:"state"`
-	SingleUse                bool        `xml:"single_use"`
-	AppliesToAllPlans        bool        `xml:"applies_to_all_plans"`
-	Duration                 string      `xml:"duration"`
-	DiscountType             string      `xml:"discount_type"`
-	AppliesToNonPlanCharges  bool        `xml:"applies_to_non_plan_charges"`
 	Description              string      `xml:"description,omitempty"`
-	InvoiceDescription       string      `xml:"invoice_description,omitempty"`
-	DiscountPercent          NullInt     `xml:"discount_percent,omitempty"`
+	DiscountType             string      `xml:"discount_type"`
 	DiscountInCents          *UnitAmount `xml:"discount_in_cents,omitempty"`
+	DiscountPercent          int         `xml:"discount_percent,omitempty"`
+	InvoiceDescription       string      `xml:"invoice_description,omitempty"`
 	RedeemByDate             NullTime    `xml:"redeem_by_date,omitempty"`
 	MaxRedemptions           NullInt     `xml:"max_redemptions,omitempty"`
-	CreatedAt                NullTime    `xml:"created_at,omitempty"`
-	UpdatedAt                NullTime    `xml:"updated_at,omitempty"`
-	DeletedAt                NullTime    `xml:"deleted_at,omitempty"`
+	AppliesToAllPlans        NullBool    `xml:"applies_to_all_plans,omitempty"`
+	Duration                 string      `xml:"duration,omitempty"`
 	TemporalUnit             string      `xml:"temporal_unit,omitempty"`
 	TemporalAmount           NullInt     `xml:"temporal_amount,omitempty"`
+	AppliesToNonPlanCharges  NullBool    `xml:"applies_to_non_plan_charges,omitempty"`
+	RedemptionResource       string      `xml:"redemption_resource,omitempty"`
 	MaxRedemptionsPerAccount NullInt     `xml:"max_redemptions_per_account,omitempty"`
+	CouponType               string      `xml:"coupon_type,omitempty"`
 	UniqueCodeTemplate       string      `xml:"unique_code_template,omitempty"`
-	UniqueCouponCodeCount    NullInt     `xml:"unique_coupon_codes_count,omitempty"`
 	PlanCodes                []string    `xml:"plan_codes>plan_code,omitempty"`
-}
+	FreeTrialAmount          NullInt     `xml:"free_trial_amount,omitempty"`
+	FreeTrialUnit            string      `xml:"free_trial_unit,omitempty"`
+	CreatedAt                NullTime    `xml:"created_at,omitempty"`
+	State                    string      `xml:"state,omitempty"`
 
-// CouponPlanCode holds an xml array of plan_code items that this coupon
-// will work with.
-type CouponPlanCode struct {
-	Code string `xml:",innerxml"`
-}
-
-type DiscountInCents struct {
-	USD int `xml:"USD,omitempty"`
+	// Deprecated: SingleUse          NullBool          `xml:"single_use,omitempty"`
+	// Deprecated: AppliesForMonths   NullInt           `xml:"applies_for_months,omitempty"`
 }
