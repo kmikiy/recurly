@@ -16,9 +16,9 @@ type redemptionsImpl struct {
 // GetForAccount looks up information about the 'active' coupon redemptions on
 // an account
 // https://dev.recurly.com/docs/lookup-a-coupon-redemption-on-an-account
-func (s *redemptionsImpl) GetForAccount(accountCode string) (*Response, []Redemption, error) {
+func (s *redemptionsImpl) GetForAccount(accountCode string, params Params) (*Response, []Redemption, error) {
 	action := fmt.Sprintf("accounts/%s/redemptions", accountCode)
-	req, err := s.client.newRequest("GET", action, nil, nil)
+	req, err := s.client.newRequest("GET", action, params, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -36,9 +36,9 @@ func (s *redemptionsImpl) GetForAccount(accountCode string) (*Response, []Redemp
 // GetForInvoice looks up information about a coupon redemption applied
 // to an invoice.
 // https://dev.recurly.com/docs/lookup-a-coupon-redemption-on-an-invoice
-func (s *redemptionsImpl) GetForInvoice(invoiceNumber string) (*Response, []Redemption, error) {
+func (s *redemptionsImpl) GetForInvoice(invoiceNumber string, params Params) (*Response, []Redemption, error) {
 	action := fmt.Sprintf("invoices/%s/redemptions", invoiceNumber)
-	req, err := s.client.newRequest("GET", action, nil, nil)
+	req, err := s.client.newRequest("GET", action, params, nil)
 	if err != nil {
 		return nil, nil, err
 	}
