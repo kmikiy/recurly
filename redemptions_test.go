@@ -37,7 +37,7 @@ func TestRedemptions_GetForAccount(t *testing.T) {
      </redemptions>`)
 	})
 
-	r, redemptions, err := client.Redemptions.GetForAccount("1")
+	r, redemptions, err := client.Redemptions.GetForAccount("1", Params{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -71,7 +71,7 @@ func TestRedemptions_GetForAccount_ErrNotFound(t *testing.T) {
 		w.WriteHeader(http.StatusNotFound)
 	})
 
-	_, redemptions, err := client.Redemptions.GetForAccount("1")
+	_, redemptions, err := client.Redemptions.GetForAccount("1", Params{})
 	if !invoked {
 		t.Fatal("handler not invoked")
 	} else if err != nil {
@@ -108,7 +108,7 @@ func TestRedemptions_GetForInvoice(t *testing.T) {
       </redemptions>`)
 	})
 
-	r, redemptions, err := client.Redemptions.GetForInvoice("1108")
+	r, redemptions, err := client.Redemptions.GetForInvoice("1108", Params{})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	} else if r.IsError() {
@@ -142,7 +142,7 @@ func TestRedemptions_GetForInvoice_ErrNotFound(t *testing.T) {
 		w.WriteHeader(http.StatusNotFound)
 	})
 
-	_, redemption, err := client.Redemptions.GetForInvoice("1108")
+	_, redemption, err := client.Redemptions.GetForInvoice("1108", Params{})
 	if !invoked {
 		t.Fatal("handler not invoked")
 	} else if err != nil {
